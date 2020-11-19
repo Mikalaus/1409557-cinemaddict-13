@@ -5,6 +5,7 @@ import {createFilmListTemplate} from './view/film-list';
 import {createFilmPopupTemplate} from './view/film-popup';
 import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
+import {createFilmsTemplate} from './view/films';
 
 const FilmListLimit = {
   DEFAULT: 5,
@@ -25,15 +26,13 @@ const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
 const footer = document.querySelector(`.footer`);
 
-const films = document.createElement(`section`);
-films.classList.add(`films`);
-main.append(films);
-
+render(main, createFilmsTemplate(), `beforeend`);
+const films = main.querySelector(`.films`);
 render(header, createProfileLevelTemplate(), `beforeend`);
 render(main, createMenuTemplate(), `afterbegin`);
 render(films, createFilmListTemplate(), `afterbegin`);
 render(films, createFilmListTemplate(true, true), `beforeend`);
-render(films, createFilmListTemplate(true), `beforeend`);
+render(films, createFilmListTemplate(true, false, true), `beforeend`);
 render(footer, createStatsTemplate(), `beforeend`);
 
 const filmsList = main.querySelector(`.films-list`);
