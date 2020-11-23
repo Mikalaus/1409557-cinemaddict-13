@@ -70,6 +70,12 @@ render(films, createFilmListExtraTemplate(true), `beforeend`);
 render(films, createFilmListExtraTemplate(), `beforeend`);
 render(footer, createStatsTemplate(moviesAmount), `beforeend`);
 
+/**
+ * функция для передачи параметров в handler
+ * @param {number} renderedCards - кол-во уже отрендеренных карточек
+ * @param {number} indexElement - индекс с которого нужна рендерить массив карточек
+ * @return {function} () => {}
+ */
 const showMoreButtonClickHandler = (renderedCards, indexElement) => () => {
   if (filmCards.length >= renderedCards) {
     renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards, indexElement);
@@ -143,7 +149,7 @@ renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 const filmCard = document.querySelector(`.film-card`);
 
 /**
- * навешивание обработчика на кнопку закрытия попапа
+ * навешивание обработчика на первый карточку для открытие попапа
  */
 filmCard.addEventListener(`click`, () => {
   render(footer, createFilmPopupTemplate(GENERATED_FILM_CARDS[0]), `afterend`);
@@ -178,12 +184,21 @@ filters.set(`default`, [sortFilters[0], Array.from]);
 filters.set(`date`, [sortFilters[1], sortByDate]);
 filters.set(`rating`, [sortFilters[2], sortByRating]);
 
+/**
+ * функция навешивания обработчика на кнопки фильтрации с последующим рендером отфильтрованных карточек
+ * @param {Object} filter - кнопка фильтрации
+ * @param {function} sortFunc - функция сортировки
+ */
 const setFilterSortFunction = (filter, sortFunc) => {
   filter.addEventListener(`click`, () => {
     renderFilteredFilmCards(sortFunc);
   });
 };
 
+/**
+ * функция добавляющяя возможность филтровать карточки путем изменения способа филтрации из меню
+ * @param {array} arr - Map фильтров
+ */
 const setFilters = (arr) => {
   for (let filter of arr) {
     setFilterSortFunction(filter[0], filter[1]);
