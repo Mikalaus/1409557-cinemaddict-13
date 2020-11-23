@@ -11,7 +11,6 @@ import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
 import {createFilmsTemplate} from './view/films';
 
-
 /**
  * массив с информацией о карточках с фильмами
  */
@@ -20,7 +19,7 @@ const GENERATED_FILM_CARDS = [];
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
-const FILMS_LIMIT = 24;
+const FILMS_LIMIT = 16;
 
 /**
  * ограничение на вывод карточек в каждом блоке
@@ -91,14 +90,21 @@ const showMoreButtonClickHandler = (renderedCards, indexElement) => () => {
 };
 
 /**
+ * удаление showMoreButton
+ */
+const deleteShowMoreButton = () => {
+  if (document.querySelector(`.films-list__show-more`)) {
+    document.querySelector(`.films-list__show-more`).remove();
+  }
+};
+
+/**
  * рендер кнопки показа других объявлений, и навешивание на нее обработчика
  * @param {function} handler - handler для обработчика клика
  */
 const renderShowMoreButton = (handler) => {
 
-  if (document.querySelector(`.films-list__show-more`)) {
-    document.querySelector(`.films-list__show-more`).remove();
-  }
+  deleteShowMoreButton();
 
   render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
 
@@ -118,12 +124,21 @@ const renderShowMoreButton = (handler) => {
   showMoreButton.addEventListener(`click`, handler(renderedCards, indexElement));
 };
 
+/**
+ * проверяет необходимость рендера кнопки
+ * @param {array} filmsListLength - кол-во карточек
+ */
+const checkNeedRenderShowMore = (filmsListLength) => {
+  if (filmsListLength > FilmListLimit.DEFAULT) {
+    renderShowMoreButton(showMoreButtonClickHandler);
+  } else {
+    deleteShowMoreButton();
+  }
+};
 
 const filmsList = main.querySelector(`.films-list`);
 const extraFilmsList = main.querySelectorAll(`.films-list--extra`);
-if (filmCards.length > FilmListLimit.DEFAULT) {
-  renderShowMoreButton(showMoreButtonClickHandler);
-}
+checkNeedRenderShowMore(filmCards.length);
 
 /**
  * рендер карточек фильмов в различных блоках
@@ -169,7 +184,7 @@ const sortFilters = document.querySelectorAll(`.sort__button`);
  */
 const renderFilteredFilmCards = (sort) => {
   filmCards = sort([...GENERATED_FILM_CARDS]);
-  renderShowMoreButton(showMoreButtonClickHandler);
+  checkNeedRenderShowMore(filmCards.length);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
     render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
@@ -190,7 +205,8 @@ filters.set(`rating`, [sortFilters[2], sortByRating]);
  * @param {function} sortFunc - функция сортировки
  */
 const setFilterSortFunction = (filter, sortFunc) => {
-  filter.addEventListener(`click`, () => {
+  filter.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
     renderFilteredFilmCards(sortFunc);
   });
 };
