@@ -1,3 +1,4 @@
+import {moviesAmount} from './mocs/rating-and-stats.js';
 import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter.js';
 import {createFilmListExtraTemplate} from './view/film-list--extra.js';
 import {generateFilmCard} from './mocs/films.js';
@@ -10,6 +11,7 @@ import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
 import {createFilmsTemplate} from './view/films';
 
+
 /**
  * массив с информацией о карточках с фильмами
  */
@@ -18,7 +20,7 @@ const GENERATED_FILM_CARDS = [];
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
-const FILMS_LIMIT = 17;
+const FILMS_LIMIT = 24;
 
 /**
  * ограничение на вывод карточек в каждом блоке
@@ -61,21 +63,38 @@ const footer = document.querySelector(`.footer`);
  */
 render(main, createFilmsTemplate(), `beforeend`);
 const films = main.querySelector(`.films`);
-render(header, createProfileLevelTemplate(), `beforeend`);
+render(header, createProfileLevelTemplate(sortHistory([...GENERATED_FILM_CARDS]).length), `beforeend`);
 render(main, createMenuTemplate(filmCards), `afterbegin`);
 render(films, createFilmListTemplate(GENERATED_FILM_CARDS), `afterbegin`);
 render(films, createFilmListExtraTemplate(true), `beforeend`);
 render(films, createFilmListExtraTemplate(), `beforeend`);
-render(footer, createStatsTemplate(), `beforeend`);
+render(footer, createStatsTemplate(moviesAmount), `beforeend`);
+
+const showMoreButtonClickHandler = (renderedCards, indexElement) => () => {
+  if (filmCards.length >= renderedCards) {
+    renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards, indexElement);
+    renderedCards += 5;
+    indexElement += 5;
+  }
+
+  if (filmCards.length <= renderedCards) {
+    document.querySelector(`.films-list__show-more`).remove();
+    renderedCards = FilmListLimit.DEFAULT;
+    indexElement = 0;
+  }
+};
 
 /**
  * рендер кнопки показа других объявлений, и навешивание на нее обработчика
+ * @param {function} handler - handler для обработчика клика
  */
-const renderShowMoreButton = () => {
+const renderShowMoreButton = (handler) => {
 
-  if (!document.querySelector(`.films-list__show-more`)) {
-    render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
+  if (document.querySelector(`.films-list__show-more`)) {
+    document.querySelector(`.films-list__show-more`).remove();
   }
+
+  render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
 
   const showMoreButton = document.querySelector(`.films-list__show-more`);
   /**
@@ -89,28 +108,15 @@ const renderShowMoreButton = () => {
    */
   let indexElement = 5;
 
-  const showMoreButtonHandler = () => {
-    if (filmCards.length >= renderedCards) {
-      renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards, indexElement);
-      renderedCards += 5;
-      indexElement += 5;
-    }
-
-    if (filmCards.length <= renderedCards) {
-      showMoreButton.remove();
-      renderedCards = FilmListLimit.DEFAULT;
-      indexElement = 0;
-    }
-  };
-
-  showMoreButton.addEventListener(`click`, showMoreButtonHandler);
+  showMoreButton.removeEventListener(`click`, handler(renderedCards, indexElement));
+  showMoreButton.addEventListener(`click`, handler(renderedCards, indexElement));
 };
 
 
 const filmsList = main.querySelector(`.films-list`);
 const extraFilmsList = main.querySelectorAll(`.films-list--extra`);
 if (filmCards.length > FilmListLimit.DEFAULT) {
-  renderShowMoreButton();
+  renderShowMoreButton(showMoreButtonClickHandler);
 }
 
 /**
@@ -157,9 +163,7 @@ const sortFilters = document.querySelectorAll(`.sort__button`);
  */
 const renderFilteredFilmCards = (sort) => {
   filmCards = sort([...GENERATED_FILM_CARDS]);
-  if (filmCards.length > FilmListLimit.DEFAULT) {
-    renderShowMoreButton();
-  }
+  renderShowMoreButton(showMoreButtonClickHandler);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
     render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
