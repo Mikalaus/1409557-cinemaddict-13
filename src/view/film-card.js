@@ -16,7 +16,7 @@ export const createFilmCardTemplate = (obj) => {
   <p class="film-card__info">
     <span class="film-card__year">${yearOfProduction}</span>
     <span class="film-card__duration">${duration}</span>
-    <span class="film-card__genre">${genre.length === 1 ? genre.join(``) : genre.join(`, `)}</span>
+    <span class="film-card__genre">${genre.join(`, `)}</span>
   </p>
   <img src=${posterURL} alt="" class="film-card__poster">
   <p class="film-card__description">${description.length > 140 ? description.substr(0, 139) + `...` : description}</p>

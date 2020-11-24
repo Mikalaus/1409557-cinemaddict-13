@@ -97,7 +97,7 @@ const createRandDatePopup = () => {
   return dayjs(`${getRandomInteger(1970, 2020)}-${getRandomInteger(1, 12)}-${getRandomInteger(1, 31)}`).format(`YYYY-MM-DD`);
 };
 
-export const generateFilmCard = () => {
+const generateFilmCard = () => {
   const COMMENTS_AMOUNT = getRandomInteger(0, 100);
   const FILM_TITLE = getRandomElementFromArray(FILM_TITLES);
   return {
@@ -129,4 +129,12 @@ export const generateFilmCard = () => {
 
     popup: createExtendedFilmMocInfo(FILM_TITLE)
   };
+};
+
+export const generateFilmCards = (limit) => {
+  let generateFilmList = [];
+  for (let i = 0; i < limit; i++) {
+    generateFilmList.push(generateFilmCard()); // генерация всех карточек в моках
+  }
+  return generateFilmList;
 };

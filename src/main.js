@@ -1,25 +1,25 @@
-import {moviesAmount} from './mocs/rating-and-stats.js';
-import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter.js';
-import {createFilmListExtraTemplate} from './view/film-list--extra.js';
-import {generateFilmCard} from './mocs/films.js';
+import {moviesAmount} from './mocs/rating-and-stats';
+import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter';
+import {createFilmListExtraTemplate} from './view/film-list--extra';
+import {generateFilmCards} from './mocs/films';
 import {createMenuTemplate} from './view/menu';
 import {createProfileLevelTemplate} from './view/profile-level';
 import {createFilmCardTemplate} from './view/film-card';
 import {createFilmListTemplate} from './view/film-list';
-import {createFilmPopupTemplate} from './view/film-popup.js';
+import {createFilmPopupTemplate} from './view/film-popup';
 import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
 import {createFilmsTemplate} from './view/films';
 
 /**
- * массив с информацией о карточках с фильмами
- */
-const GENERATED_FILM_CARDS = [];
-
-/**
  * ограничение по максимальному кол-ву карточек из моков
  */
 const FILMS_LIMIT = 16;
+
+/**
+ * массив с информацией о карточках с фильмами
+ */
+const GENERATED_FILM_CARDS = generateFilmCards(FILMS_LIMIT); // вынести в моки и экспортировать
 
 /**
  * ограничение на вывод карточек в каждом блоке
@@ -30,13 +30,6 @@ const FilmListLimit = {
   DEFAULT: 5,
   EXTRA: 2
 };
-
-/**
- * генерация моков
- */
-for (let i = 0; i < FILMS_LIMIT; i++) {
-  GENERATED_FILM_CARDS.push(generateFilmCard());
-}
 
 /**
  * сохранение сгенерированного массива данных в отдельный блок, для сохранения информации при фильтрации
@@ -198,9 +191,10 @@ renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 /**
  * функция рендера и сортировки массива, в зависимости от фильтра
  * @param {function} sort - метод сортировки (дефолтный: Array.from())
+ * @param {array} filmList
  */
-const renderFilteredFilmCards = (sort) => {
-  filmCards = sort([...GENERATED_FILM_CARDS]);
+const renderFilteredFilmCards = (sort, filmList) => {
+  filmCards = sort(filmList);
   checkNeedRenderShowMore(filmCards.length);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
@@ -209,37 +203,45 @@ const renderFilteredFilmCards = (sort) => {
   addPopupOpen();
 };
 
-const filters = new Map();
-filters.set(`watchlist`, [navFilters[1], sortWatchlist]);
-filters.set(`history`, [navFilters[2], sortHistory]);
-filters.set(`favourites`, [navFilters[3], sortFavourites]);
-filters.set(`default`, [sortFilters[0], Array.from]);
-filters.set(`date`, [sortFilters[1], sortByDate]);
-filters.set(`rating`, [sortFilters[2], sortByRating]);
+const globalFilters = new Map();
+globalFilters.set(`all movies`, [navFilters[0], Array.from]);
+globalFilters.set(`watchlist`, [navFilters[1], sortWatchlist]);
+globalFilters.set(`history`, [navFilters[2], sortHistory]);
+globalFilters.set(`favourites`, [navFilters[3], sortFavourites]);
+
+const localFilters = new Map();
+localFilters.set(`default`, [sortFilters[0], Array.from]);
+localFilters.set(`date`, [sortFilters[1], sortByDate]);
+localFilters.set(`rating`, [sortFilters[2], sortByRating]);
 
 /**
  * функция навешивания обработчика на кнопки фильтрации с последующим рендером отфильтрованных карточек
  * @param {Object} filter - кнопка фильтрации
  * @param {function} sortFunc - функция сортировки
+ * @param {array} filmList
  */
-const setFilterSortFunction = (filter, sortFunc) => {
+const setFilterSortFunction = (filter, sortFunc, filmList) => {
   filter.addEventListener(`click`, (evt) => {
+    document.querySelector(`.${filter.classList.item(0)}--active`).classList.remove(`${filter.classList.item(0)}--active`);
+    filter.classList.add(`${filter.classList.item(0)}--active`);
     evt.preventDefault();
-    renderFilteredFilmCards(sortFunc);
+    renderFilteredFilmCards(sortFunc, filmList);
   });
 };
 
 /**
  * функция добавляющяя возможность фильтровать карточки путем изменения способа фильтрации из меню
  * @param {array} arr - Map фильтров
+ * @param {array} filmList
  */
-const setFilters = (arr) => {
+const setFilters = (arr, filmList) => {
   for (let filter of arr) {
-    setFilterSortFunction(filter[0], filter[1]);
+    setFilterSortFunction(filter[0], filter[1], filmList);
   }
 };
 
 /**
  * добавление функционала фильтрации
  */
-setFilters(filters.values());
+setFilters(globalFilters.values(), [...GENERATED_FILM_CARDS]);
+setFilters(localFilters.values(), filmCards);
