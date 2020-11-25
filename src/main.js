@@ -140,30 +140,27 @@ const checkNeedRenderShowMore = (filmsListLength) => {
 checkNeedRenderShowMore(filmCards.length);
 
 /**
- * handler на карточку фильма
- * @param {number} i - номер рендерируемой карточки
- */
-const filmCardClickHandler = (i) => {
-  if (document.querySelector(`.film-details`)) {
-    const popup = document.querySelector(`.film-details`);
-    popup.remove();
-  }
-
-  render(footer, createFilmPopupTemplate(filmCards[i]), `afterend`);
-  const closePopupButton = document.querySelector(`.film-details__close-btn`);
-  closePopupButton.addEventListener(`click`, () => {
-    const popup = document.querySelector(`.film-details`);
-    popup.remove();
-  });
-};
-
-/**
  * навешивание обработчиков на карточки для открытия попапа
+ * @param {number} index - индекс карточки, на которую надо навешивать обработчик
  */
-const addPopupOpen = () => {
+const addPopupOpen = (index) => {
   const filmCardList = filmsList.querySelectorAll(`.film-card`);
-  for (let i = 0; i < filmCardList.length; i++) {
-    filmCardList[i].addEventListener(`click`, () => filmCardClickHandler(i));
+
+  for (let i = index; i < filmCardList.length; i++) {
+    const filmCardClickHandler = () => {
+      if (document.querySelector(`.film-details`)) {
+        const popup = document.querySelector(`.film-details`);
+        popup.remove();
+      }
+
+      render(footer, createFilmPopupTemplate(filmCards[i]), `afterend`);
+      const closePopupButton = document.querySelector(`.film-details__close-btn`);
+      closePopupButton.addEventListener(`click`, () => {
+        const popup = document.querySelector(`.film-details`);
+        popup.remove();
+      });
+    };
+    filmCardList[i].addEventListener(`click`, filmCardClickHandler);
   }
 };
 
@@ -177,10 +174,9 @@ const addPopupOpen = () => {
 const renderFilmList = (filmList, limit, arr, indexElement = 0) => {
   for (let i = 0; i < limit && indexElement < arr.length; i++) {
     render(filmList.querySelector(`.films-list__container`), createFilmCardTemplate(arr[indexElement]), `beforeend`);
+    addPopupOpen(indexElement);
     indexElement++;
   }
-
-  addPopupOpen();
 };
 
 /**
@@ -202,8 +198,8 @@ const renderFilteredFilmCards = (sort, filmList) => {
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
     render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
+    addPopupOpen(i);
   }
-  addPopupOpen();
 };
 
 const globalFilters = new Map();
