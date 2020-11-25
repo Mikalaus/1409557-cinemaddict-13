@@ -11,6 +11,9 @@ import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
 import {createFilmsTemplate} from './view/films';
 
+const TOP_RATED = `Top Rated`;
+const MOST_COMMENTED = `Most Commented`;
+
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
@@ -58,8 +61,8 @@ const films = main.querySelector(`.films`);
 render(header, createProfileLevelTemplate(sortHistory([...GENERATED_FILM_CARDS]).length), `beforeend`);
 render(main, createMenuTemplate(filmCards), `afterbegin`);
 render(films, createFilmListTemplate(GENERATED_FILM_CARDS), `afterbegin`);
-render(films, createFilmListExtraTemplate(true), `beforeend`);
-render(films, createFilmListExtraTemplate(), `beforeend`);
+render(films, createFilmListExtraTemplate(TOP_RATED), `beforeend`);
+render(films, createFilmListExtraTemplate(MOST_COMMENTED), `beforeend`);
 render(footer, createStatsTemplate(moviesAmount), `beforeend`);
 
 const filmsList = main.querySelector(`.films-list`);
