@@ -1,3 +1,5 @@
 export const createFilmsTemplate = () => {
-  return `<section class="films"></section>`;
+  return `
+  <section class="films"></section>
+  `;
 };

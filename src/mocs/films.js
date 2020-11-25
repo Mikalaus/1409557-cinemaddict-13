@@ -76,19 +76,6 @@ const createCommentMocInfo = (amount) => {
   return commentsList;
 };
 
-const createExtendedFilmMocInfo = (title) => {
-  return {
-    originalTitle: title.en,
-    producer: getRandomElementFromArray(PRODUCERS),
-    screenwriter: getRandomElementsFromArray(SCREENWRITERS),
-    stars: getRandomElementsFromArray(STARING),
-    country: getRandomElementFromArray(COUNTRIES),
-    fullDescription: getRandomElementFromArray(DUMMY_TEXT),
-    ageLimit: getRandomElementFromArray(AGE_LIMITS),
-    date: createRandDatePopup()
-  };
-};
-
 const createRandDateComment = () => {
   return dayjs(`${2020 - getRandomInteger()}-${getRandomInteger(1, 12)}-${getRandomInteger(1, 30)}-${getRandomInteger(0, 24)}:${getRandomInteger(0, 60)}`).format(`HH:mm DD/MM/YYYY`);
 };
@@ -115,7 +102,7 @@ const generateFilmCard = () => {
 
     genre: getRandomElementsFromArray(GENRE),
 
-    commentsnumber: getRandomInteger(0, 12),
+    commentsNumber: getRandomInteger(0, 12),
 
     isWatched: Boolean(getRandomInteger()),
 
@@ -127,7 +114,21 @@ const generateFilmCard = () => {
 
     comments: createCommentMocInfo(COMMENTS_AMOUNT),
 
-    popup: createExtendedFilmMocInfo(FILM_TITLE)
+    originalTitle: FILM_TITLE.en,
+
+    producer: getRandomElementFromArray(PRODUCERS),
+
+    screenwriter: getRandomElementsFromArray(SCREENWRITERS),
+
+    stars: getRandomElementsFromArray(STARING),
+
+    country: getRandomElementFromArray(COUNTRIES),
+
+    fullDescription: getRandomElementFromArray(DUMMY_TEXT),
+
+    ageLimit: getRandomElementFromArray(AGE_LIMITS),
+
+    date: createRandDatePopup()
   };
 };
 

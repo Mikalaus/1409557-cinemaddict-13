@@ -1,12 +1,12 @@
 import {moviesAmount} from './mocs/rating-and-stats';
 import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter';
-import {createFilmListExtraTemplate} from './view/film-list--extra';
+import {createFilmListExtraTemplate} from './view/list--extra';
 import {generateFilmCards} from './mocs/films';
 import {createMenuTemplate} from './view/menu';
 import {createProfileLevelTemplate} from './view/profile-level';
-import {createFilmCardTemplate} from './view/film-card';
-import {createFilmListTemplate} from './view/film-list';
-import {createFilmPopupTemplate} from './view/film-popup';
+import {createFilmCardTemplate} from './view/card';
+import {createFilmListTemplate} from './view/list';
+import {createFilmPopupTemplate} from './view/popup';
 import {createShowMoreButtonTemplate} from './view/show-more-button';
 import {createStatsTemplate} from './view/stats';
 import {createFilmsTemplate} from './view/films';
@@ -19,7 +19,7 @@ const FILMS_LIMIT = 16;
 /**
  * массив с информацией о карточках с фильмами
  */
-const GENERATED_FILM_CARDS = generateFilmCards(FILMS_LIMIT); // вынести в моки и экспортировать
+const GENERATED_FILM_CARDS = generateFilmCards(FILMS_LIMIT);
 
 /**
  * ограничение на вывод карточек в каждом блоке
@@ -138,10 +138,9 @@ checkNeedRenderShowMore(filmCards.length);
 
 /**
  * handler на карточку фильма
- * @return {function} () => {}
  * @param {number} i - номер рендерируемой карточки
  */
-const filmCardClickHandler = (i) => () => {
+const filmCardClickHandler = (i) => {
   if (document.querySelector(`.film-details`)) {
     const popup = document.querySelector(`.film-details`);
     popup.remove();
@@ -161,7 +160,7 @@ const filmCardClickHandler = (i) => () => {
 const addPopupOpen = () => {
   const filmCardList = filmsList.querySelectorAll(`.film-card`);
   for (let i = 0; i < filmCardList.length; i++) {
-    filmCardList[i].addEventListener(`click`, filmCardClickHandler(i));
+    filmCardList[i].addEventListener(`click`, () => filmCardClickHandler(i));
   }
 };
 
@@ -196,6 +195,7 @@ renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 const renderFilteredFilmCards = (sort, filmList) => {
   filmCards = sort(filmList);
   checkNeedRenderShowMore(filmCards.length);
+  setFilters(localFilters.values(), filmCards);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
     render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
@@ -244,4 +244,3 @@ const setFilters = (arr, filmList) => {
  * добавление функционала фильтрации
  */
 setFilters(globalFilters.values(), [...GENERATED_FILM_CARDS]);
-setFilters(localFilters.values(), filmCards);
