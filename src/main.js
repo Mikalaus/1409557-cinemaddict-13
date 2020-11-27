@@ -1,3 +1,4 @@
+// сделать переключение сортировки на default при смене глобальной фильтрации
 import {moviesAmount} from './mocs/rating-and-stats';
 import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter';
 import {createFilmListExtraTemplate} from './view/list--extra';
@@ -45,7 +46,7 @@ let filmCards = [...GENERATED_FILM_CARDS];
  * @param {String} template - `<template>...</template>`
  * @param {String} place - beforeEnd/AfterEnd/etc
  */
-const render = (container, template, place) => {
+const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -56,14 +57,14 @@ const footer = document.querySelector(`.footer`);
 /**
  * рендер основной разметки
  */
-render(main, createFilmsTemplate(), `beforeend`);
+render(main, createFilmsTemplate());
 const films = main.querySelector(`.films`);
-render(header, createProfileLevelTemplate(sortHistory([...GENERATED_FILM_CARDS]).length), `beforeend`);
+render(header, createProfileLevelTemplate(sortHistory([...GENERATED_FILM_CARDS]).length));
 render(main, createMenuTemplate(filmCards), `afterbegin`);
 render(films, createFilmListTemplate(GENERATED_FILM_CARDS), `afterbegin`);
-render(films, createFilmListExtraTemplate(TOP_RATED), `beforeend`);
-render(films, createFilmListExtraTemplate(MOST_COMMENTED), `beforeend`);
-render(footer, createStatsTemplate(moviesAmount), `beforeend`);
+render(films, createFilmListExtraTemplate(TOP_RATED));
+render(films, createFilmListExtraTemplate(MOST_COMMENTED));
+render(footer, createStatsTemplate(moviesAmount));
 
 const filmsList = main.querySelector(`.films-list`);
 const extraFilmsList = main.querySelectorAll(`.films-list--extra`);
@@ -80,8 +81,8 @@ const sortFilters = document.querySelectorAll(`.sort__button`);
 const showMoreButtonClickHandler = (renderedCards, indexElement) => () => {
   if (filmCards.length >= renderedCards) {
     renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards, indexElement);
-    renderedCards += 5;
-    indexElement += 5;
+    renderedCards += FilmListLimit.DEFAULT;
+    indexElement += FilmListLimit.DEFAULT;
   }
 
   if (filmCards.length <= renderedCards) {
@@ -95,8 +96,9 @@ const showMoreButtonClickHandler = (renderedCards, indexElement) => () => {
  * удаление showMoreButton
  */
 const deleteShowMoreButton = () => {
-  if (document.querySelector(`.films-list__show-more`)) {
-    document.querySelector(`.films-list__show-more`).remove();
+  const showMoreButton = document.querySelector(`.films-list__show-more`);
+  if (showMoreButton) {
+    showMoreButton.remove();
   }
 };
 
@@ -120,7 +122,7 @@ const renderShowMoreButton = (handler) => {
    * отслеживание индекса рендерируемых объектов, для последовательного
      вывода фильтрованных массивов с информацией о карточках
    */
-  let indexElement = 5;
+  let indexElement = FilmListLimit.DEFAULT;
 
   showMoreButton.addEventListener(`click`, handler(renderedCards, indexElement));
 };
@@ -168,12 +170,12 @@ const addPopupOpen = (index) => {
  * рендер карточек фильмов в различных блоках
  * @param {Object} filmList - передаваемый блок
  * @param {Number} limit - лимит карточек
- * @param {Array} arr - массив отображаемых карточек
+ * @param {Array} cardsList - массив отображаемых карточек
  * @param {Number} indexElement - передаваемое значение индекса с которого должен начинаться рендер
  */
-const renderFilmList = (filmList, limit, arr, indexElement = 0) => {
-  for (let i = 0; i < limit && indexElement < arr.length; i++) {
-    render(filmList.querySelector(`.films-list__container`), createFilmCardTemplate(arr[indexElement]), `beforeend`);
+const renderFilmList = (filmList, limit, cardsList, indexElement = 0) => {
+  for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
+    render(filmList.querySelector(`.films-list__container`), createFilmCardTemplate(cardsList[indexElement]), `beforeend`);
     addPopupOpen(indexElement);
     indexElement++;
   }
