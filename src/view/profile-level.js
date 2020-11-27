@@ -3,7 +3,7 @@ import {createElement} from '../util';
 
 const createProfileLevelTemplate = (movies) => {
   let rank = `novice`;
-  let template;
+  let template = ``;
   if (movies > 11 && movies < 21) {
     rank = `fan`;
   } else if (movies > 20) {
@@ -34,6 +34,8 @@ export default class ProfileLevelView {
   getElement() {
     if (this._element) {
       this._element = createElement(this.getTemplate());
+    } else {
+      this._element = ``;
     }
 
     return this._element;

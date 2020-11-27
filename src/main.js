@@ -22,7 +22,7 @@ const NAV_BUTTON_CLASS = `main-navigation__item`;
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
-const FILMS_LIMIT = 16;
+const FILMS_LIMIT = 0;
 
 /**
  * массив с информацией о карточках с фильмами
@@ -57,8 +57,10 @@ const films = main.querySelector(`.films`);
 renderElement(header, new ProfileLevelView(sortHistory([...GENERATED_FILM_CARDS]).length).getElement(), RenderPosition.BEFOREEND);
 renderElement(main, new MenuView(filmCards).getElement(), RenderPosition.AFTERBEGIN);
 renderElement(films, new ListView(GENERATED_FILM_CARDS).getElement(), RenderPosition.AFTERBEGIN);
-renderElement(films, new ListExtraView(TOP_RATED).getElement(), RenderPosition.BEFOREEND);
-renderElement(films, new ListExtraView(MOST_COMMENTED).getElement(), RenderPosition.BEFOREEND);
+if (GENERATED_FILM_CARDS.length) {
+  renderElement(films, new ListExtraView(TOP_RATED).getElement(), RenderPosition.BEFOREEND);
+  renderElement(films, new ListExtraView(MOST_COMMENTED).getElement(), RenderPosition.BEFOREEND);
+}
 renderElement(footer, new StatsView(moviesAmount).getElement(), RenderPosition.BEFOREEND);
 
 const filmsList = main.querySelector(`.films-list`);
