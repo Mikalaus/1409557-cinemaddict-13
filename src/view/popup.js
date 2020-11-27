@@ -1,7 +1,9 @@
+import {createElement} from '../util';
 import {createFilmPopupComment} from './popup--comment.js';
 import {createFilmPopupGenres} from './popup-genres.js';
 
-export const createFilmPopupTemplate = (obj) => {
+
+const createFilmPopupTemplate = (obj) => {
 
   const {
     title,
@@ -139,3 +141,32 @@ export const createFilmPopupTemplate = (obj) => {
   </section>
   `;
 };
+
+export default class PopupView {
+  constructor(cardInfo) {
+    this._element = cardInfo;
+    this._closeBtn = null;
+  }
+
+  getTemplate() {
+    return createFilmPopupTemplate(this._element);
+  }
+
+  getElement() {
+    if (this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    this._closeBtn = this._element.querySelector(`.film-details__close-btn`);
+
+    return this._element;
+  }
+
+  get closeButton() {
+    return this._closeBtn;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

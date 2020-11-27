@@ -1,16 +1,17 @@
-// сделать переключение сортировки на default при смене глобальной фильтрации
+import {renderElement, RenderPosition} from './util';
 import {moviesAmount} from './mocs/rating-and-stats';
 import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter';
-import {createFilmListExtraTemplate} from './view/list--extra';
 import {generateFilmCards} from './mocs/films';
-import {createMenuTemplate} from './view/menu';
-import {createProfileLevelTemplate} from './view/profile-level';
-import {createFilmCardTemplate} from './view/card';
-import {createFilmListTemplate} from './view/list';
-import {createFilmPopupTemplate} from './view/popup';
-import {createShowMoreButtonTemplate} from './view/show-more-button';
-import {createStatsTemplate} from './view/stats';
-import {createFilmsTemplate} from './view/films';
+import ListExtraView from './view/list--extra';
+import MenuView from './view/menu';
+import ProfileLevelView from './view/profile-level';
+import FilmCardView from './view/card';
+import ListView from './view/list';
+import PopupView from './view/popup';
+import ShowMoreButtonView from './view/show-more-button';
+import StatsView from './view/stats';
+import FilmsView from './view/films';
+
 
 const TOP_RATED = `Top Rated`;
 const MOST_COMMENTED = `Most Commented`;
@@ -43,16 +44,7 @@ const FilmListLimit = {
  */
 let filmCards = [...GENERATED_FILM_CARDS];
 
-/**
- * функция рендера верстки в заданный элемент(контейнер)
- * @param {DomElement} container
- * @param {String} template - `<template>...</template>`
- * @param {String} place - beforeEnd/AfterEnd/etc
- */
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
+const body = document.querySelector(`body`);
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
 const footer = document.querySelector(`.footer`);
@@ -60,14 +52,14 @@ const footer = document.querySelector(`.footer`);
 /**
  * рендер основной разметки
  */
-render(main, createFilmsTemplate());
+renderElement(main, new FilmsView().getElement(), RenderPosition.BEFOREEND);
 const films = main.querySelector(`.films`);
-render(header, createProfileLevelTemplate(sortHistory([...GENERATED_FILM_CARDS]).length));
-render(main, createMenuTemplate(filmCards), `afterbegin`);
-render(films, createFilmListTemplate(GENERATED_FILM_CARDS), `afterbegin`);
-render(films, createFilmListExtraTemplate(TOP_RATED));
-render(films, createFilmListExtraTemplate(MOST_COMMENTED));
-render(footer, createStatsTemplate(moviesAmount));
+renderElement(header, new ProfileLevelView(sortHistory([...GENERATED_FILM_CARDS]).length).getElement(), RenderPosition.BEFOREEND);
+renderElement(main, new MenuView(filmCards).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(films, new ListView(GENERATED_FILM_CARDS).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(films, new ListExtraView(TOP_RATED).getElement(), RenderPosition.BEFOREEND);
+renderElement(films, new ListExtraView(MOST_COMMENTED).getElement(), RenderPosition.BEFOREEND);
+renderElement(footer, new StatsView(moviesAmount).getElement(), RenderPosition.BEFOREEND);
 
 const filmsList = main.querySelector(`.films-list`);
 const extraFilmsList = main.querySelectorAll(`.films-list--extra`);
@@ -113,7 +105,7 @@ const renderShowMoreButton = (handler) => {
 
   deleteShowMoreButton();
 
-  render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
+  renderElement(filmsList, new ShowMoreButtonView().getElement(), RenderPosition.BEFOREEND);
 
   const showMoreButton = document.querySelector(`.films-list__show-more`);
   /**
@@ -153,7 +145,7 @@ checkNeedRenderShowMore(filmCards.length);
  */
 const renderFilmList = (filmList, limit, cardsList, indexElement = 0) => {
   for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
-    render(filmList.querySelector(`.films-list__container`), createFilmCardTemplate(cardsList[indexElement]), `beforeend`);
+    renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement]).getElement(), RenderPosition.BEFOREEND);
     indexElement++;
   }
 };
@@ -161,8 +153,8 @@ const renderFilmList = (filmList, limit, cardsList, indexElement = 0) => {
 /**
  * рендер изначальных фильмов в разметку
  */
-renderFilmList(extraFilmsList[0], FilmListLimit.EXTRA, sortByRating([...GENERATED_FILM_CARDS]));
 renderFilmList(extraFilmsList[1], FilmListLimit.EXTRA, sortByComments([...GENERATED_FILM_CARDS]));
+renderFilmList(extraFilmsList[0], FilmListLimit.EXTRA, sortByRating([...GENERATED_FILM_CARDS]));
 renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 
 /**
@@ -170,8 +162,9 @@ renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
  * @param {event} evt
  */
 const сlosePopup = (evt) => {
-  if (evt.keyCode === 27 || evt.игеещт === 1) {
+  if (evt.keyCode === 27 || evt.button === 0) {
     const popup = footer.querySelector(`.film-details`);
+    body.classList.toggle(`hide-overflow`);
     popup.remove();
     document.removeEventListener(`keydown`, сlosePopup);
   }
@@ -183,19 +176,23 @@ const сlosePopup = (evt) => {
  */
 const filmListClickHandler = (evt) => {
   evt.preventDefault();
+  body.classList.toggle(`hide-overflow`);
   const cardId = evt.target.parentNode.id;
   for (let card of GENERATED_FILM_CARDS) {
     if (card.id === cardId) {
-      render(footer, createFilmPopupTemplate(card));
-      const closeButton = footer.querySelector(`.film-details__close-btn`);
-      closeButton.addEventListener(`mousedown`, сlosePopup);
+      const popupComponent = new PopupView(card);
+      renderElement(footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
+      popupComponent.closeButton.addEventListener(`mousedown`, сlosePopup);
       document.addEventListener(`keydown`, сlosePopup);
       break;
     }
   }
 };
 
-filmsList.addEventListener(`click`, filmListClickHandler);
+filmsList.querySelector(`.films-list__container`).addEventListener(`click`, filmListClickHandler);
+for (let list of extraFilmsList) {
+  list.addEventListener(`click`, filmListClickHandler);
+}
 
 /**
  * функция рендера и сортировки массива, в зависимости от фильтра
@@ -207,7 +204,7 @@ const renderFilteredFilmCards = (sort, filmList) => {
   checkNeedRenderShowMore(filmCards.length);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
-    render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
+    renderElement(filmsList.querySelector(`.films-list__container`), new FilmCardView(filmCards[i]).getElement(), RenderPosition.BEFOREEND);
   }
 };
 
@@ -223,7 +220,7 @@ localFilters.set(`date`, [sortFilters[1], sortByDate]);
 localFilters.set(`rating`, [sortFilters[2], sortByRating]);
 
 // переменная для сохранения в нее функции предыдущей фильтрации для локальных фильтров
-let previousFilter = () => Array.from;
+let previousFilter = Array.from;
 
 // функция для сброса сортировки при глобальной фильтрации
 const resetDefaultSorting = () => {

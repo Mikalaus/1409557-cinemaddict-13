@@ -1,4 +1,7 @@
-export const createFilmCardTemplate = (obj) => {
+import {createElement} from '../util.js';
+
+
+const createFilmCardTemplate = (obj) => {
 
   const {
     id,
@@ -31,3 +34,25 @@ export const createFilmCardTemplate = (obj) => {
   </article>
   `;
 };
+
+export default class FilmCardView {
+  constructor(filmInfo) {
+    this._element = filmInfo;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._element);
+  }
+
+  getElement() {
+    if (this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,4 +1,7 @@
-export const createProfileLevelTemplate = (movies) => {
+import {createElement} from '../util';
+
+
+const createProfileLevelTemplate = (movies) => {
   let rank = `novice`;
   let template;
   if (movies > 11 && movies < 21) {
@@ -18,3 +21,25 @@ export const createProfileLevelTemplate = (movies) => {
 
   return template;
 };
+
+export default class ProfileLevelView {
+  constructor(moviesAmount) {
+    this._element = moviesAmount;
+  }
+
+  getTemplate() {
+    return createProfileLevelTemplate(this._element);
+  }
+
+  getElement() {
+    if (this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
