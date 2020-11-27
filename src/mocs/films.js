@@ -1,5 +1,6 @@
 import {getRandomElementFromArray, getRandomInteger, getRandomElementsFromArray} from '../util.js';
 import dayjs from '../../node_modules/dayjs';
+import {nanoid} from 'nanoid';
 
 const FILM_TITLES = [
   {
@@ -88,6 +89,8 @@ const generateFilmCard = () => {
   const COMMENTS_AMOUNT = getRandomInteger(0, 100);
   const FILM_TITLE = getRandomElementFromArray(FILM_TITLES);
   return {
+    id: nanoid(10),
+
     title: FILM_TITLE.ru,
 
     posterURL: getRandomElementFromArray(POSTER_URL),

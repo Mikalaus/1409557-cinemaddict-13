@@ -1,6 +1,7 @@
 export const createFilmCardTemplate = (obj) => {
 
   const {
+    id,
     title,
     rating,
     yearOfProduction,
@@ -11,7 +12,7 @@ export const createFilmCardTemplate = (obj) => {
     commentsAmount} = obj;
 
   return `
-  <article class="film-card">
+  <article class="film-card" id="${id}">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">

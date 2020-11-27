@@ -15,6 +15,9 @@ import {createFilmsTemplate} from './view/films';
 const TOP_RATED = `Top Rated`;
 const MOST_COMMENTED = `Most Commented`;
 
+const SORT_BUTTON_CLASS = `sort__button`;
+const NAV_BUTTON_CLASS = `main-navigation__item`;
+
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
@@ -142,31 +145,6 @@ const checkNeedRenderShowMore = (filmsListLength) => {
 checkNeedRenderShowMore(filmCards.length);
 
 /**
- * навешивание обработчиков на карточки для открытия попапа
- * @param {number} index - индекс карточки, на которую надо навешивать обработчик
- */
-const addPopupOpen = (index) => {
-  const filmCardList = filmsList.querySelectorAll(`.film-card`);
-
-  for (let i = index; i < filmCardList.length; i++) {
-    const filmCardClickHandler = () => {
-      if (document.querySelector(`.film-details`)) {
-        const popup = document.querySelector(`.film-details`);
-        popup.remove();
-      }
-
-      render(footer, createFilmPopupTemplate(filmCards[i]), `afterend`);
-      const closePopupButton = document.querySelector(`.film-details__close-btn`);
-      closePopupButton.addEventListener(`click`, () => {
-        const popup = document.querySelector(`.film-details`);
-        popup.remove();
-      });
-    };
-    filmCardList[i].addEventListener(`click`, filmCardClickHandler);
-  }
-};
-
-/**
  * рендер карточек фильмов в различных блоках
  * @param {Object} filmList - передаваемый блок
  * @param {Number} limit - лимит карточек
@@ -176,7 +154,6 @@ const addPopupOpen = (index) => {
 const renderFilmList = (filmList, limit, cardsList, indexElement = 0) => {
   for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
     render(filmList.querySelector(`.films-list__container`), createFilmCardTemplate(cardsList[indexElement]), `beforeend`);
-    addPopupOpen(indexElement);
     indexElement++;
   }
 };
@@ -189,6 +166,38 @@ renderFilmList(extraFilmsList[1], FilmListLimit.EXTRA, sortByComments([...GENERA
 renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 
 /**
+ * callback для удаления попапа
+ * @param {event} evt
+ */
+const сlosePopup = (evt) => {
+  if (evt.keyCode === 27 || evt.игеещт === 1) {
+    const popup = footer.querySelector(`.film-details`);
+    popup.remove();
+    document.removeEventListener(`keydown`, сlosePopup);
+  }
+};
+
+/**
+ * callback для отлавливания нужной карточки и рендера попапа на ее основании
+ * @param {Event} evt
+ */
+const filmListClickHandler = (evt) => {
+  evt.preventDefault();
+  const cardId = evt.target.parentNode.id;
+  for (let card of GENERATED_FILM_CARDS) {
+    if (card.id === cardId) {
+      render(footer, createFilmPopupTemplate(card));
+      const closeButton = footer.querySelector(`.film-details__close-btn`);
+      closeButton.addEventListener(`mousedown`, сlosePopup);
+      document.addEventListener(`keydown`, сlosePopup);
+      break;
+    }
+  }
+};
+
+filmsList.addEventListener(`click`, filmListClickHandler);
+
+/**
  * функция рендера и сортировки массива, в зависимости от фильтра
  * @param {function} sort - метод сортировки (дефолтный: Array.from())
  * @param {array} filmList
@@ -196,11 +205,9 @@ renderFilmList(filmsList, FilmListLimit.DEFAULT, filmCards);
 const renderFilteredFilmCards = (sort, filmList) => {
   filmCards = sort(filmList);
   checkNeedRenderShowMore(filmCards.length);
-  setFilters(localFilters.values(), filmCards);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
     render(filmsList.querySelector(`.films-list__container`), createFilmCardTemplate(filmCards[i]), `beforeend`);
-    addPopupOpen(i);
   }
 };
 
@@ -215,6 +222,15 @@ localFilters.set(`default`, [sortFilters[0], Array.from]);
 localFilters.set(`date`, [sortFilters[1], sortByDate]);
 localFilters.set(`rating`, [sortFilters[2], sortByRating]);
 
+// переменная для сохранения в нее функции предыдущей фильтрации для локальных фильтров
+let previousFilter = () => Array.from;
+
+// функция для сброса сортировки при глобальной фильтрации
+const resetDefaultSorting = () => {
+  document.querySelector(`.${SORT_BUTTON_CLASS}--active`).classList.remove(`${SORT_BUTTON_CLASS}--active`);
+  document.querySelector(`.${SORT_BUTTON_CLASS}`).classList.add(`${SORT_BUTTON_CLASS}--active`);
+};
+
 /**
  * функция навешивания обработчика на кнопки фильтрации с последующим рендером отфильтрованных карточек
  * @param {Object} filter - кнопка фильтрации
@@ -226,6 +242,13 @@ const setFilterSortFunction = (filter, sortFunc, filmList) => {
     document.querySelector(`.${filter.classList.item(0)}--active`).classList.remove(`${filter.classList.item(0)}--active`);
     filter.classList.add(`${filter.classList.item(0)}--active`);
     evt.preventDefault();
+    if (`${filter.classList.item(0)}` === NAV_BUTTON_CLASS) {
+      previousFilter = sortFunc;
+      resetDefaultSorting();
+    }
+    if (`${filter.classList.item(0)}` === SORT_BUTTON_CLASS) {
+      filmList = previousFilter([...GENERATED_FILM_CARDS]);
+    }
     renderFilteredFilmCards(sortFunc, filmList);
   });
 };
@@ -245,3 +268,4 @@ const setFilters = (arr, filmList) => {
  * добавление функционала фильтрации
  */
 setFilters(globalFilters.values(), [...GENERATED_FILM_CARDS]);
+setFilters(localFilters.values(), filmCards);
