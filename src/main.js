@@ -1,6 +1,12 @@
 import {renderElement, RenderPosition} from './util';
 import {moviesAmount} from './mocs/rating-and-stats';
-import {sortByDate, sortFavourites, sortByRating, sortHistory, sortWatchlist, sortByComments} from './mocs/filter';
+import {
+  sortByDate,
+  sortFavourites,
+  sortByRating,
+  sortHistory,
+  sortWatchlist,
+  sortByComments} from './mocs/filter';
 import {generateFilmCards} from './mocs/films';
 import ListExtraView from './view/list--extra';
 import MenuView from './view/menu';
@@ -9,7 +15,7 @@ import FilmCardView from './view/card';
 import ListView from './view/list';
 import PopupView from './view/popup';
 import ShowMoreButtonView from './view/show-more-button';
-import StatsView from './view/stats';
+import MoviesStatsView from './view/movies-stats';
 import FilmsView from './view/films';
 
 
@@ -22,7 +28,7 @@ const NAV_BUTTON_CLASS = `main-navigation__item`;
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
-const FILMS_LIMIT = 0;
+const FILMS_LIMIT = 17;
 
 /**
  * массив с информацией о карточках с фильмами
@@ -52,16 +58,16 @@ const footer = document.querySelector(`.footer`);
 /**
  * рендер основной разметки
  */
-renderElement(main, new FilmsView().getElement(), RenderPosition.BEFOREEND);
+renderElement(main, new FilmsView().element, RenderPosition.BEFOREEND);
 const films = main.querySelector(`.films`);
-renderElement(header, new ProfileLevelView(sortHistory([...GENERATED_FILM_CARDS]).length).getElement(), RenderPosition.BEFOREEND);
-renderElement(main, new MenuView(filmCards).getElement(), RenderPosition.AFTERBEGIN);
-renderElement(films, new ListView(GENERATED_FILM_CARDS).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(header, new ProfileLevelView(sortHistory([...GENERATED_FILM_CARDS]).length).element, RenderPosition.BEFOREEND);
+renderElement(main, new MenuView(filmCards).element, RenderPosition.AFTERBEGIN);
+renderElement(films, new ListView(GENERATED_FILM_CARDS).element, RenderPosition.AFTERBEGIN);
 if (GENERATED_FILM_CARDS.length) {
-  renderElement(films, new ListExtraView(TOP_RATED).getElement(), RenderPosition.BEFOREEND);
-  renderElement(films, new ListExtraView(MOST_COMMENTED).getElement(), RenderPosition.BEFOREEND);
+  renderElement(films, new ListExtraView(TOP_RATED).element, RenderPosition.BEFOREEND);
+  renderElement(films, new ListExtraView(MOST_COMMENTED).element, RenderPosition.BEFOREEND);
 }
-renderElement(footer, new StatsView(moviesAmount).getElement(), RenderPosition.BEFOREEND);
+renderElement(footer, new MoviesStatsView(moviesAmount).element, RenderPosition.BEFOREEND);
 
 const filmsList = main.querySelector(`.films-list`);
 const extraFilmsList = main.querySelectorAll(`.films-list--extra`);
@@ -107,7 +113,7 @@ const renderShowMoreButton = (handler) => {
 
   deleteShowMoreButton();
 
-  renderElement(filmsList, new ShowMoreButtonView().getElement(), RenderPosition.BEFOREEND);
+  renderElement(filmsList, new ShowMoreButtonView().element, RenderPosition.BEFOREEND);
 
   const showMoreButton = document.querySelector(`.films-list__show-more`);
   /**
@@ -147,7 +153,7 @@ checkNeedRenderShowMore(filmCards.length);
  */
 const renderFilmList = (filmList, limit, cardsList, indexElement = 0) => {
   for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
-    renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement]).getElement(), RenderPosition.BEFOREEND);
+    renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement]).element, RenderPosition.BEFOREEND);
     indexElement++;
   }
 };
@@ -183,7 +189,7 @@ const filmListClickHandler = (evt) => {
   for (let card of GENERATED_FILM_CARDS) {
     if (card.id === cardId) {
       const popupComponent = new PopupView(card);
-      renderElement(footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
+      renderElement(footer, popupComponent.element, RenderPosition.BEFOREEND);
       popupComponent.closeButton.addEventListener(`mousedown`, сlosePopup);
       document.addEventListener(`keydown`, сlosePopup);
       break;
@@ -206,7 +212,7 @@ const renderFilteredFilmCards = (sort, filmList) => {
   checkNeedRenderShowMore(filmCards.length);
   filmsList.querySelector(`.films-list__container`).innerHTML = ``;
   for (let i = 0; i < FilmListLimit.DEFAULT && i < filmCards.length; i++) {
-    renderElement(filmsList.querySelector(`.films-list__container`), new FilmCardView(filmCards[i]).getElement(), RenderPosition.BEFOREEND);
+    renderElement(filmsList.querySelector(`.films-list__container`), new FilmCardView(filmCards[i]).element, RenderPosition.BEFOREEND);
   }
 };
 

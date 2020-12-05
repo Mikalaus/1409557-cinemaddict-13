@@ -1,4 +1,4 @@
-import {createElement} from '../util';
+import AbstractView from './abstract';
 import {createFilmPopupComment} from './popup--comment.js';
 import {createFilmPopupGenres} from './popup-genres.js';
 
@@ -142,8 +142,9 @@ const createFilmPopupTemplate = (obj) => {
   `;
 };
 
-export default class PopupView {
+export default class PopupView extends AbstractView {
   constructor(cardInfo) {
+    super();
     this._element = cardInfo;
     this._closeBtn = null;
   }
@@ -152,21 +153,8 @@ export default class PopupView {
     return createFilmPopupTemplate(this._element);
   }
 
-  getElement() {
-    if (this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    this._closeBtn = this._element.querySelector(`.film-details__close-btn`);
-
-    return this._element;
-  }
-
   get closeButton() {
+    this._closeBtn = this._element.querySelector(`.film-details__close-btn`);
     return this._closeBtn;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
