@@ -57,6 +57,7 @@ const createElement = (template) => {
   return newElement.firstElementChild;
 };
 
+
 export {
   getRandomElementFromArray,
   getRandomInteger,

@@ -14,7 +14,7 @@ export default class Abstract {
     throw new Error(`Method need initialization before using`);
   }
 
-  get element() {
+  getElement() {
     this._element = createElement(this.getTemplate());
 
     return this._element;
