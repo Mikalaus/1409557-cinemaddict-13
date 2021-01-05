@@ -145,13 +145,13 @@ const createFilmPopupTemplate = (obj) => {
 export default class PopupView extends AbstractView {
   constructor(cardInfo) {
     super();
-    this._element = cardInfo;
+    this._cardInfo = cardInfo;
     this._closeBtn = null;
     this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilmPopupTemplate(this._element);
+    return createFilmPopupTemplate(this._cardInfo);
   }
 
   _clickHandler(evt) {

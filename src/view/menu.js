@@ -31,10 +31,10 @@ const createMenuTemplate = (filmList) => {
 export default class MenuView extends AbstractView {
   constructor(filmList) {
     super();
-    this._element = filmList;
+    this._filmList = filmList;
   }
 
   getTemplate() {
-    return createMenuTemplate(this._element);
+    return createMenuTemplate(this._filmList);
   }
 }

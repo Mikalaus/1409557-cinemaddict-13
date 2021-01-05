@@ -12,10 +12,10 @@ const createMoviesStatsTemplate = (moviesAmount) => {
 export default class MoviesStatsView extends AbstractView {
   constructor(moviesAmount) {
     super();
-    this._element = moviesAmount;
+    this._moviesAmount = moviesAmount;
   }
 
   getTemplate() {
-    return createMoviesStatsTemplate(this._element);
+    return createMoviesStatsTemplate(this._moviesAmount);
   }
 }

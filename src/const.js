@@ -21,6 +21,11 @@ const NAV_BUTTON_CLASS = `main-navigation__item`;
  */
 const FILMS_LIMIT = 17;
 
+const PopupMode = {
+  OPEN: true,
+  CLOSED: false
+};
+
 export {
   FilmListLimit,
   TOP_RATED,
@@ -28,5 +33,6 @@ export {
   SORT_BUTTON_CLASS,
   NAV_BUTTON_CLASS,
   FILMS_LIMIT,
-  DEFAULT_RENDER_INDEX
+  DEFAULT_RENDER_INDEX,
+  PopupMode
 };

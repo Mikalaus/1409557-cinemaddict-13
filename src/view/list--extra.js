@@ -12,7 +12,7 @@ const createFilmListExtraTemplate = (title) => {
 export default class ListExtraView extends AbstractView {
   constructor(title) {
     super();
-    this._element = title;
+    this._title = title;
     this._filmsContainer = null;
     this._clickHandler = this._clickHandler.bind(this);
   }
@@ -33,6 +33,6 @@ export default class ListExtraView extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmListExtraTemplate(this._element);
+    return createFilmListExtraTemplate(this._title);
   }
 }

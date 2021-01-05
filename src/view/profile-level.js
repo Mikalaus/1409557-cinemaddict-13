@@ -24,10 +24,10 @@ const createProfileLevelTemplate = (movies) => {
 export default class ProfileLevelView extends AbstractView {
   constructor(moviesAmount) {
     super();
-    this._element = moviesAmount;
+    this._moviesAmount = moviesAmount;
   }
 
   getTemplate() {
-    return createProfileLevelTemplate(this._element);
+    return createProfileLevelTemplate(this._moviesAmount);
   }
 }
