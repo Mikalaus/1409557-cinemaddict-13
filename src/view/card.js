@@ -1,6 +1,7 @@
 import AbstractView from './abstract';
+import {createElement} from '../util';
 
-const createFilmCardTemplate = (obj) => {
+const createFilmCardTemplate = (film) => {
 
   const {
     id,
@@ -11,7 +12,7 @@ const createFilmCardTemplate = (obj) => {
     genre,
     posterURL,
     description,
-    commentsAmount} = obj;
+    commentsAmount} = film;
 
   return `
   <article class="film-card" id="${id}">
@@ -35,12 +36,56 @@ const createFilmCardTemplate = (obj) => {
 };
 
 export default class FilmCardView extends AbstractView {
-  constructor(filmInfo) {
+  constructor(filmInfo, menu) {
     super();
+    this._menu = menu;
     this._filmInfo = filmInfo;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._filmInfo);
+  }
+
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    this._setSortButtonsClickHandler();
+    return this._element;
+  }
+
+  _setSortButtonsClickHandler() {
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, () => {
+
+      if (this._filmInfo.isAddedToWatchlist) {
+        this._filmInfo.isAddedToWatchlist = false;
+      } else {
+        this._filmInfo.isAddedToWatchlist = true;
+      }
+
+      this._menu.updateWatchlist();
+    });
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, () => {
+
+      if (this._filmInfo.isWatched) {
+        this._filmInfo.isWatched = false;
+      } else {
+        this._filmInfo.isWatched = true;
+      }
+
+      this._menu.updateHistoryList();
+    });
+    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, () => {
+
+      if (this._filmInfo.isFavourite) {
+        this._filmInfo.isFavourite = false;
+      } else {
+        this._filmInfo.isFavourite = true;
+      }
+
+      this._menu.updateFavourites();
+    });
   }
 }

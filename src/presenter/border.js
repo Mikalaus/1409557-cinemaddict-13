@@ -55,6 +55,7 @@ export default class BoardPresenter {
     this._filmList = new ListView(this._generatedFilmCards);
     this._topRated = new ListExtraView(TOP_RATED);
     this._mostCommented = new ListExtraView(MOST_COMMENTED);
+    this._menu = new MenuView(this._filteredFilmCards);
 
     this._films = null;
 
@@ -84,7 +85,7 @@ export default class BoardPresenter {
     renderElement(this._main, new FilmsView().getElement(), RenderPosition.BEFOREEND);
     this._films = this._main.querySelector(`.films`);
     renderElement(this._header, new ProfileLevelView(sortHistory([...this._generatedFilmCards]).length).getElement(), RenderPosition.BEFOREEND);
-    renderElement(this._main, new MenuView(this._filteredFilmCards).getElement(), RenderPosition.AFTERBEGIN);
+    renderElement(this._main, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     renderElement(this._films, this._filmList.getElement(), RenderPosition.AFTERBEGIN);
 
     if (this._generatedFilmCards.length) {
@@ -138,7 +139,7 @@ export default class BoardPresenter {
    */
   _renderFilmList(filmList, limit, cardsList, indexElement = 0) {
     for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
-      renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement]).getElement(), RenderPosition.BEFOREEND);
+      renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement], this._menu).getElement(), RenderPosition.BEFOREEND);
       indexElement++;
     }
   }
@@ -215,20 +216,25 @@ export default class BoardPresenter {
    * @param {Event} evt
    */
   _filmListClickHandler(evt) {
-    if (this._popupMode) {
-      this._footer.querySelector(`.film-details`).remove();
-    }
-    this._popupMode = PopupMode.OPEN;
-    evt.preventDefault();
-    this._body.classList.add(`hide-overflow`);
-    const cardId = evt.target.parentNode.id;
-    for (let card of this._generatedFilmCards) {
-      if (card.id === cardId) {
-        const popupComponent = new PopupView(card);
-        renderElement(this._footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
-        popupComponent.setCloseButtonClickHandler(this._closePopup);
-        document.addEventListener(`keydown`, this._closePopup);
-        break;
+    if (evt.target.closest(`.film-card`) && evt.target.tagName !== `BUTTON`) {
+
+      this._cardId = evt.target.closest(`.film-card`).id;
+
+      if (this._popupMode === true) {
+        this._footer.querySelector(`.film-details`).remove();
+      }
+      this._popupMode = PopupMode.OPEN;
+      evt.preventDefault();
+      this._body.classList.add(`hide-overflow`);
+
+      for (let card of this._generatedFilmCards) {
+        if (card.id === this._cardId) {
+          const popupComponent = new PopupView(card, this._menu);
+          renderElement(this._footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
+          popupComponent.setCloseButtonClickHandler(this._closePopup);
+          document.addEventListener(`keydown`, this._closePopup);
+          break;
+        }
       }
     }
   }
@@ -243,7 +249,7 @@ export default class BoardPresenter {
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
     this._filmsList.querySelector(`.films-list__container`).innerHTML = ``;
     for (let i = 0; i < FilmListLimit.DEFAULT && i < this._filteredFilmCards.length; i++) {
-      renderElement(this._filmsList.querySelector(`.films-list__container`), new FilmCardView(this._filteredFilmCards[i]).getElement(), RenderPosition.BEFOREEND);
+      renderElement(this._filmsList.querySelector(`.films-list__container`), new FilmCardView(this._filteredFilmCards[i], this._menu).getElement(), RenderPosition.BEFOREEND);
     }
   }
 

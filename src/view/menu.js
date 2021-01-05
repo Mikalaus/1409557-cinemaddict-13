@@ -34,6 +34,18 @@ export default class MenuView extends AbstractView {
     this._filmList = filmList;
   }
 
+  updateWatchlist() {
+    this._element.querySelector(`a[href="#watchlist"] span`).innerHTML = sortWatchlist([...this._filmList]).length;
+  }
+
+  updateHistoryList() {
+    this._element.querySelector(`a[href="#history"] span`).innerHTML = sortHistory([...this._filmList]).length;
+  }
+
+  updateFavourites() {
+    this._element.querySelector(`a[href="#favorites"] span`).innerHTML = sortFavourites([...this._filmList]).length;
+  }
+
   getTemplate() {
     return createMenuTemplate(this._filmList);
   }
