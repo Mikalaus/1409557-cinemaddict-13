@@ -76,6 +76,11 @@ export default class BoardPresenter {
 
     this._filmListClickHandler = this._filmListClickHandler.bind(this);
     this._closePopup = this._closePopup.bind(this);
+
+    this._updateWatchlist = this._updateWatchlist.bind(this);
+    this._updateHistoryList = this._updateHistoryList.bind(this);
+    this._updateFavourites = this._updateFavourites.bind(this);
+    this._profileLevel = new ProfileLevelView();
   }
 
   init() {
@@ -84,7 +89,7 @@ export default class BoardPresenter {
      */
     renderElement(this._main, new FilmsView().getElement(), RenderPosition.BEFOREEND);
     this._films = this._main.querySelector(`.films`);
-    renderElement(this._header, new ProfileLevelView(sortHistory([...this._generatedFilmCards]).length).getElement(), RenderPosition.BEFOREEND);
+    renderElement(this._header, this._profileLevel.getElement(sortHistory([...this._generatedFilmCards]).length), RenderPosition.BEFOREEND);
     renderElement(this._main, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     renderElement(this._films, this._filmList.getElement(), RenderPosition.AFTERBEGIN);
 
@@ -139,7 +144,12 @@ export default class BoardPresenter {
    */
   _renderFilmList(filmList, limit, cardsList, indexElement = 0) {
     for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
-      renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(cardsList[indexElement], this._menu).getElement(), RenderPosition.BEFOREEND);
+      renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(
+          cardsList[indexElement],
+          this._menu,
+          this._updateWatchlist,
+          this._updateHistoryList,
+          this._updateFavourites).getElement(), RenderPosition.BEFOREEND);
       indexElement++;
     }
   }
@@ -229,7 +239,12 @@ export default class BoardPresenter {
 
       for (let card of this._generatedFilmCards) {
         if (card.id === this._cardId) {
-          const popupComponent = new PopupView(card, this._menu);
+          const popupComponent = new PopupView(
+              card,
+              this._menu,
+              this._updateWatchlist,
+              this._updateHistoryList,
+              this._updateFavourites);
           renderElement(this._footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
           popupComponent.setCloseButtonClickHandler(this._closePopup);
           document.addEventListener(`keydown`, this._closePopup);
@@ -249,7 +264,37 @@ export default class BoardPresenter {
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
     this._filmsList.querySelector(`.films-list__container`).innerHTML = ``;
     for (let i = 0; i < FilmListLimit.DEFAULT && i < this._filteredFilmCards.length; i++) {
-      renderElement(this._filmsList.querySelector(`.films-list__container`), new FilmCardView(this._filteredFilmCards[i], this._menu).getElement(), RenderPosition.BEFOREEND);
+      renderElement(this._filmsList.querySelector(`.films-list__container`),
+          new FilmCardView(
+              this._filteredFilmCards[i],
+              this._menu,
+              this._updateWatchlist,
+              this._updateHistoryList,
+              this._updateFavourites
+          ).getElement(), RenderPosition.BEFOREEND);
+    }
+  }
+
+  _updateWatchlist() {
+    this._menu._addWatchlistButton.innerHTML = sortWatchlist([...this._filteredFilmCards]).length;
+    if (this._menu._addWatchlistButton.parentNode.classList.contains(this._menu._activeClass)) {
+      this._renderFilteredFilmCards(sortWatchlist, this._filteredFilmCards);
+    }
+  }
+
+  _updateHistoryList() {
+    this._menu._addHistoryListButton.innerHTML = sortHistory([...this._filteredFilmCards]).length;
+    this._profileLevel.destroy();
+    renderElement(this._header, this._profileLevel.getElement(sortHistory([...this._generatedFilmCards]).length), RenderPosition.BEFOREEND);
+    if (this._menu._addHistoryListButton.parentNode.classList.contains(this._menu._activeClass)) {
+      this._renderFilteredFilmCards(sortHistory, this._filteredFilmCards);
+    }
+  }
+
+  _updateFavourites() {
+    this._menu._addFavouriteListButton.innerHTML = sortFavourites([...this._filteredFilmCards]).length;
+    if (this._menu._addFavouriteListButton.parentNode.classList.contains(this._menu._activeClass)) {
+      this._renderFilteredFilmCards(sortFavourites, this._filteredFilmCards);
     }
   }
 

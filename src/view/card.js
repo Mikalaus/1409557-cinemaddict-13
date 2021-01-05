@@ -36,10 +36,13 @@ const createFilmCardTemplate = (film) => {
 };
 
 export default class FilmCardView extends AbstractView {
-  constructor(filmInfo, menu) {
+  constructor(filmInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
     this._menu = menu;
     this._filmInfo = filmInfo;
+    this._callback.watchlist = updateWatchlist;
+    this._callback.history = updateHistory;
+    this._callback.favourites = updateFavourites;
   }
 
   getTemplate() {
@@ -65,8 +68,9 @@ export default class FilmCardView extends AbstractView {
         this._filmInfo.isAddedToWatchlist = true;
       }
 
-      this._menu.updateWatchlist();
+      this._callback.watchlist();
     });
+
     this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, () => {
 
       if (this._filmInfo.isWatched) {
@@ -75,8 +79,9 @@ export default class FilmCardView extends AbstractView {
         this._filmInfo.isWatched = true;
       }
 
-      this._menu.updateHistoryList();
+      this._callback.history();
     });
+
     this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, () => {
 
       if (this._filmInfo.isFavourite) {
@@ -85,7 +90,7 @@ export default class FilmCardView extends AbstractView {
         this._filmInfo.isFavourite = true;
       }
 
-      this._menu.updateFavourites();
+      this._callback.favourites();
     });
   }
 }

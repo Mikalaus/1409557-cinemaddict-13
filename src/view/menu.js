@@ -1,5 +1,6 @@
 import AbstractView from './abstract';
 import {sortFavourites, sortHistory, sortWatchlist} from '../mocs/filter.js';
+import {createElement} from '../util';
 
 
 const createMenuTemplate = (filmList) => {
@@ -32,21 +33,21 @@ export default class MenuView extends AbstractView {
   constructor(filmList) {
     super();
     this._filmList = filmList;
-  }
-
-  updateWatchlist() {
-    this._element.querySelector(`a[href="#watchlist"] span`).innerHTML = sortWatchlist([...this._filmList]).length;
-  }
-
-  updateHistoryList() {
-    this._element.querySelector(`a[href="#history"] span`).innerHTML = sortHistory([...this._filmList]).length;
-  }
-
-  updateFavourites() {
-    this._element.querySelector(`a[href="#favorites"] span`).innerHTML = sortFavourites([...this._filmList]).length;
+    this._activeClass = `main-navigation__item--active`;
   }
 
   getTemplate() {
     return createMenuTemplate(this._filmList);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+      this._addWatchlistButton = this._element.querySelector(`a[href="#watchlist"] span`);
+      this._addHistoryListButton = this._element.querySelector(`a[href="#history"] span`);
+      this._addFavouriteListButton = this._element.querySelector(`a[href="#favorites"] span`);
+    }
+
+    return this._element;
   }
 }

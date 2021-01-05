@@ -1,4 +1,5 @@
 import AbstractView from './abstract';
+import {createElement} from '../util';
 
 const createProfileLevelTemplate = (movies) => {
   let rank = `novice`;
@@ -22,12 +23,21 @@ const createProfileLevelTemplate = (movies) => {
 };
 
 export default class ProfileLevelView extends AbstractView {
-  constructor(moviesAmount) {
-    super();
-    this._moviesAmount = moviesAmount;
+
+  getTemplate(moviesAmount) {
+    return createProfileLevelTemplate(moviesAmount);
   }
 
-  getTemplate() {
-    return createProfileLevelTemplate(this._moviesAmount);
+  getElement(moviesAmount) {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(moviesAmount));
+    }
+
+    return this._element;
+  }
+
+  destroy() {
+    this._element.remove();
+    this._element = null;
   }
 }

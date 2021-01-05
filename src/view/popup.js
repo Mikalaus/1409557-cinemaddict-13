@@ -148,12 +148,15 @@ const createFilmPopupTemplate = (filmInfo) => {
 };
 
 export default class PopupView extends AbstractView {
-  constructor(cardInfo, menu) {
+  constructor(cardInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
     this._cardInfo = cardInfo;
     this._menu = menu;
     this._closeBtn = null;
     this._clickHandler = this._clickHandler.bind(this);
+    this._callback.watchlist = updateWatchlist;
+    this._callback.history = updateHistory;
+    this._callback.favourites = updateFavourites;
   }
 
   getTemplate() {
@@ -194,7 +197,7 @@ export default class PopupView extends AbstractView {
         this._cardInfo.isAddedToWatchlist = true;
       }
 
-      this._menu.updateWatchlist();
+      this._callback.watchlist();
     });
     this._element.querySelector(`#watched`).addEventListener(`click`, () => {
 
@@ -204,7 +207,7 @@ export default class PopupView extends AbstractView {
         this._cardInfo.isWatched = true;
       }
 
-      this._menu.updateHistoryList();
+      this._callback.history();
     });
     this._element.querySelector(`#favorite`).addEventListener(`click`, () => {
 
@@ -214,7 +217,7 @@ export default class PopupView extends AbstractView {
         this._cardInfo.isFavourite = true;
       }
 
-      this._menu.updateFavourites();
+      this._callback.favourites();
     });
   }
 }
