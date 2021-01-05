@@ -267,17 +267,21 @@ export default class BoardPresenter {
    */
   _setFilterSortFunction(filter, sortFunc, filmList) {
     filter.addEventListener(`click`, (evt) => {
-      document.querySelector(`.${filter.classList.item(0)}--active`).classList.remove(`${filter.classList.item(0)}--active`);
-      filter.classList.add(`${filter.classList.item(0)}--active`);
       evt.preventDefault();
-      if (`${filter.classList.item(0)}` === NAV_BUTTON_CLASS) {
-        this._previousFilter = sortFunc;
-        this._resetDefaultSorting();
+      this._defaultSortClass = filter.classList.item(0);
+      this._previousSort = document.querySelector(`.${this._defaultSortClass}--active`);
+      if (this._previousSort !== filter) {
+        document.querySelector(`.${this._defaultSortClass}--active`).classList.remove(`${this._defaultSortClass}--active`);
+        filter.classList.add(`${this._defaultSortClass}--active`);
+        if (`${this._defaultSortClass}` === NAV_BUTTON_CLASS) {
+          this._previousFilter = sortFunc;
+          this._resetDefaultSorting();
+        }
+        if (`${this._defaultSortClass}` === SORT_BUTTON_CLASS) {
+          filmList = this._previousFilter([...this._generatedFilmCards]);
+        }
+        this._renderFilteredFilmCards(sortFunc, filmList);
       }
-      if (`${filter.classList.item(0)}` === SORT_BUTTON_CLASS) {
-        filmList = this._previousFilter([...this._generatedFilmCards]);
-      }
-      this._renderFilteredFilmCards(sortFunc, filmList);
     });
   }
 
