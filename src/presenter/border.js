@@ -226,9 +226,10 @@ export default class BoardPresenter {
    * @param {Event} evt
    */
   _filmListClickHandler(evt) {
-    if (evt.target.closest(`.film-card`) && evt.target.tagName !== `BUTTON`) {
+    const activeFilmCard = evt.target.closest(`.film-card`);
+    if (activeFilmCard && evt.target.tagName !== `BUTTON`) {
 
-      this._cardId = evt.target.closest(`.film-card`).id;
+      this._cardId = activeFilmCard.id;
 
       if (this._popupMode === true) {
         this._footer.querySelector(`.film-details`).remove();
@@ -240,6 +241,7 @@ export default class BoardPresenter {
       for (let card of this._generatedFilmCards) {
         if (card.id === this._cardId) {
           const popupComponent = new PopupView(
+              activeFilmCard,
               card,
               this._menu,
               this._updateWatchlist,

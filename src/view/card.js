@@ -12,7 +12,11 @@ const createFilmCardTemplate = (film) => {
     genre,
     posterURL,
     description,
-    commentsAmount} = film;
+    commentsAmount,
+    isWatched,
+    isAddedToWatchlist,
+    isFavourite
+  } = film;
 
   return `
   <article class="film-card" id="${id}">
@@ -27,9 +31,9 @@ const createFilmCardTemplate = (film) => {
     <p class="film-card__description">${description.length > 140 ? description.substr(0, 139) + `...` : description}</p>
     <a class="film-card__comments">${commentsAmount} comments</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item ${isAddedToWatchlist ? `film-card__controls-item--active` : ``} button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item ${isWatched ? `film-card__controls-item--active` : ``} button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
+      <button class="film-card__controls-item ${isFavourite ? `film-card__controls-item--active` : ``} button film-card__controls-item--favorite" type="button">Mark as favorite</button>
     </div>
   </article>
   `;
@@ -43,6 +47,10 @@ export default class FilmCardView extends AbstractView {
     this._callback.watchlist = updateWatchlist;
     this._callback.history = updateHistory;
     this._callback.favourites = updateFavourites;
+    this._addToWatchButton = null;
+    this._addToHistoryButton = null;
+    this._addFavouritesButton = null;
+    this._activeButtonClass = `film-card__controls-item--active`;
   }
 
   getTemplate() {
@@ -59,37 +67,47 @@ export default class FilmCardView extends AbstractView {
     return this._element;
   }
 
+  _setSortButtons() {
+    this._addToWatchButton = this._element.querySelector(`.film-card__controls-item--add-to-watchlist`);
+    this._addToHistoryButton = this._element.querySelector(`.film-card__controls-item--mark-as-watched`);
+    this._addFavouritesButton = this._element.querySelector(`.film-card__controls-item--favorite`);
+  }
+
   _setSortButtonsClickHandler() {
-    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, () => {
+    this._setSortButtons();
+
+    this._addToWatchButton.addEventListener(`click`, () => {
 
       if (this._filmInfo.isAddedToWatchlist) {
         this._filmInfo.isAddedToWatchlist = false;
       } else {
         this._filmInfo.isAddedToWatchlist = true;
       }
-
+      this._addToWatchButton.classList.toggle(this._activeButtonClass);
       this._callback.watchlist();
     });
 
-    this._element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, () => {
+    this._addToHistoryButton.addEventListener(`click`, () => {
 
       if (this._filmInfo.isWatched) {
         this._filmInfo.isWatched = false;
       } else {
         this._filmInfo.isWatched = true;
       }
-
+      this._addToHistoryButton.classList.toggle(this._activeButtonClass);
       this._callback.history();
     });
 
-    this._element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, () => {
+    this._addFavouritesButton.addEventListener(`click`, () => {
 
       if (this._filmInfo.isFavourite) {
         this._filmInfo.isFavourite = false;
+
       } else {
         this._filmInfo.isFavourite = true;
-      }
 
+      }
+      this._addFavouritesButton.classList.toggle(this._activeButtonClass);
       this._callback.favourites();
     });
   }

@@ -148,7 +148,7 @@ const createFilmPopupTemplate = (filmInfo) => {
 };
 
 export default class PopupView extends AbstractView {
-  constructor(cardInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
+  constructor(filmCard, cardInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
     this._cardInfo = cardInfo;
     this._menu = menu;
@@ -157,6 +157,7 @@ export default class PopupView extends AbstractView {
     this._callback.watchlist = updateWatchlist;
     this._callback.history = updateHistory;
     this._callback.favourites = updateFavourites;
+    this._filmCard = filmCard;
   }
 
   getTemplate() {
@@ -197,6 +198,8 @@ export default class PopupView extends AbstractView {
         this._cardInfo.isAddedToWatchlist = true;
       }
 
+      this._filmCard.querySelector(`.film-card__controls-item--add-to-watchlist`).classList.toggle(`film-card__controls-item--active`);
+
       this._callback.watchlist();
     });
     this._element.querySelector(`#watched`).addEventListener(`click`, () => {
@@ -207,6 +210,8 @@ export default class PopupView extends AbstractView {
         this._cardInfo.isWatched = true;
       }
 
+      this._filmCard.querySelector(`.film-card__controls-item--mark-as-watched`).classList.toggle(`film-card__controls-item--active`);
+
       this._callback.history();
     });
     this._element.querySelector(`#favorite`).addEventListener(`click`, () => {
@@ -216,6 +221,8 @@ export default class PopupView extends AbstractView {
       } else {
         this._cardInfo.isFavourite = true;
       }
+
+      this._filmCard.querySelector(`.film-card__controls-item--favorite`).classList.toggle(`film-card__controls-item--active`);
 
       this._callback.favourites();
     });
