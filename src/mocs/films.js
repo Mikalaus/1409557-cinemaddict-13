@@ -33,7 +33,8 @@ const EMOJI = [
   {src: `images/emoji/sleeping.png`,
     alt: `emoji-sleeping`},
   {src: `images/emoji/smile.png`,
-    alt: `emoji-smile`}];
+    alt: `emoji-smile`}
+];
 
 const DUMMY_TEXT = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
@@ -86,7 +87,7 @@ const createRandDatePopup = () => {
 };
 
 const generateFilmCard = () => {
-  const COMMENTS_AMOUNT = getRandomInteger(0, 100);
+  const COMMENTS_AMOUNT = getRandomInteger(0, 40);
   const FILM_TITLE = getRandomElementFromArray(FILM_TITLES);
   return {
     id: nanoid(10),
@@ -135,10 +136,12 @@ const generateFilmCard = () => {
   };
 };
 
-export const generateFilmCards = (limit) => {
+const generateFilmCards = (limit) => {
   let generateFilmList = [];
   for (let i = 0; i < limit; i++) {
     generateFilmList.push(generateFilmCard()); // генерация всех карточек в моках
   }
   return generateFilmList;
 };
+
+export {generateFilmCards, createCommentMocInfo};

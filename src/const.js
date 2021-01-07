@@ -10,6 +10,8 @@ const FilmListLimit = {
 
 const DEFAULT_RENDER_INDEX = 5;
 
+const ENTER_KEY = 13;
+
 const TOP_RATED = `Top Rated`;
 const MOST_COMMENTED = `Most Commented`;
 
@@ -22,7 +24,7 @@ const NAV_BUTTON_CLASS = `main-navigation__item`;
 const FILMS_LIMIT = 17;
 
 const PopupMode = {
-  OPEN: true,
+  OPENED: true,
   CLOSED: false
 };
 
@@ -34,5 +36,6 @@ export {
   NAV_BUTTON_CLASS,
   FILMS_LIMIT,
   DEFAULT_RENDER_INDEX,
-  PopupMode
+  PopupMode,
+  ENTER_KEY
 };

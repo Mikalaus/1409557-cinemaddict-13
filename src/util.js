@@ -1,6 +1,7 @@
 const RenderPosition = {
   BEFOREEND: `beforeend`,
-  AFTERBEGIN: `afterbegin`
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`
 };
 
 const getRandomElementFromArray = (arr) => {

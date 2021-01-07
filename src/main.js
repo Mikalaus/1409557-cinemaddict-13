@@ -1,5 +1,9 @@
-import BoardPresenter from './presenter/border';
+import BoardPresenter from './presenter/board';
+import {generateFilmCards} from './mocs/films';
+import {FILMS_LIMIT} from './const';
 
-const board = new BoardPresenter();
+const generatedFilmCards = generateFilmCards(FILMS_LIMIT);
+
+const board = new BoardPresenter(generatedFilmCards);
 
 board.init();

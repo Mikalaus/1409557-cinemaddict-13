@@ -4,7 +4,6 @@ import {
   MOST_COMMENTED,
   SORT_BUTTON_CLASS,
   NAV_BUTTON_CLASS,
-  FILMS_LIMIT,
   DEFAULT_RENDER_INDEX,
   PopupMode
 } from '../const';
@@ -24,7 +23,7 @@ import {
 } from '../mocs/filter';
 
 import {moviesAmount} from '../mocs/rating-and-stats';
-import {generateFilmCards} from '../mocs/films';
+
 import ListExtraView from '../view/list--extra';
 import MenuView from '../view/menu';
 import ProfileLevelView from '../view/profile-level';
@@ -35,12 +34,14 @@ import ShowMoreButtonView from '../view/show-more-button';
 import MoviesStatsView from '../view/movies-stats';
 import FilmsView from '../view/films';
 
+// реализовать датабиндинг между TopRated/MostCommented с основным filmlist-ом
+
 export default class BoardPresenter {
-  constructor() {
+  constructor(generatedFilmCards) {
     /**
      * массив с информацией о карточках с фильмами
      */
-    this._generatedFilmCards = generateFilmCards(FILMS_LIMIT);
+    this._generatedFilmCards = generatedFilmCards;
 
     /**
      * сохранение сгенерированного массива данных в отдельный блок, для сохранения информации при фильтрации
@@ -234,7 +235,7 @@ export default class BoardPresenter {
       if (this._popupMode === true) {
         this._footer.querySelector(`.film-details`).remove();
       }
-      this._popupMode = PopupMode.OPEN;
+      this._popupMode = PopupMode.OPENED;
       evt.preventDefault();
       this._body.classList.add(`hide-overflow`);
 
