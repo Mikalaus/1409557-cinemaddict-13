@@ -1,6 +1,7 @@
 import {createElement} from '../util';
 import {createCommentMocInfo} from '../mocs/films';
 import Abstract from './abstract';
+import he from "he";
 
 const createFilmPopupComment = (commentsList, addedByUser) => {
   let commentList = ``;
@@ -13,7 +14,7 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
           <img src="${src}" width="55" height="55" alt="${alt}">
         </span>
         <div>
-          <p class="film-details__comment-text">${text}</p>
+          <p class="film-details__comment-text">${he.encode(text)}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${publicationDate}</span>

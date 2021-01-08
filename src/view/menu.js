@@ -1,12 +1,12 @@
 import AbstractView from './abstract';
-import {sortFavourites, sortHistory, sortWatchlist} from '../mocs/filter.js';
 import {createElement} from '../util';
+import {SORT_BUTTON_CLASS, FiltersList} from '../const';
 
 
 const createMenuTemplate = (filmList) => {
-  const watchlist = sortWatchlist([...filmList]).length;
-  const history = sortHistory([...filmList]).length;
-  const favourites = sortFavourites([...filmList]).length;
+  const watchlist = FiltersList.sortWatchlist([...filmList]).length;
+  const history = FiltersList.sortHistory([...filmList]).length;
+  const favourites = FiltersList.sortFavourites([...filmList]).length;
 
   return `
   <div>
@@ -49,5 +49,9 @@ export default class MenuView extends AbstractView {
     }
 
     return this._element;
+  }
+
+  destroy() {
+    this._element.remove();
   }
 }

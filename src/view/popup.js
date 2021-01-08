@@ -160,16 +160,20 @@ const createFilmPopupTemplate = (filmInfo) => {
 export default class PopupView extends SmartView {
   constructor(filmCard, cardInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
+
     this._cardInfo = cardInfo;
     this._menu = menu;
     this._closeBtn = null;
+    this._filmCard = filmCard;
+    this._commentsAmount = cardInfo.commentsAmount;
+
     this._clickHandler = this._clickHandler.bind(this);
     this._commentDispatchHandler = this._commentDispatchHandler.bind(this);
+
     this._callback.watchlist = updateWatchlist;
     this._callback.history = updateHistory;
     this._callback.favourites = updateFavourites;
-    this._filmCard = filmCard;
-    this._commentsAmount = cardInfo.commentsAmount;
+
     this._form = {
       src: ``,
       alt: ``,
@@ -197,7 +201,6 @@ export default class PopupView extends SmartView {
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, (evt) => {
       if (evt.keyCode === ENTER_KEY) {
         evt.preventDefault();
-        return false;
       }
     });
 

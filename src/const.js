@@ -8,6 +8,43 @@ const FilmListLimit = {
   EXTRA: 2
 };
 
+const FiltersList = {
+  sortByDate: (arr) => {
+    arr.sort((a, b) => {
+      return b.yearOfProduction - a.yearOfProduction;
+    });
+
+    return arr;
+  },
+  sortByRating: (arr) => {
+    arr.sort((a, b) => {
+      return b.rating - a.rating;
+    });
+
+    return arr;
+  },
+
+  sortByComments: (arr) => {
+    arr.sort((a, b) => {
+      return b.commentsAmount - a.commentsAmount;
+    });
+
+    return arr;
+  },
+
+  sortWatchlist: (arr) => {
+    return [...arr].filter((film) => film.isAddedToWatchlist);
+  },
+
+  sortHistory: (arr) => {
+    return [...arr].filter((film) => film.isWatched);
+  },
+
+  sortFavourites: (arr) => {
+    return [...arr].filter((film) => film.isFavourite);
+  }
+};
+
 const DEFAULT_RENDER_INDEX = 5;
 
 const ENTER_KEY = 13;
@@ -37,5 +74,6 @@ export {
   FILMS_LIMIT,
   DEFAULT_RENDER_INDEX,
   PopupMode,
-  ENTER_KEY
+  ENTER_KEY,
+  FiltersList
 };
