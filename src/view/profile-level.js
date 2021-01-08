@@ -1,14 +1,9 @@
-import AbstractView from './abstract';
+import Smart from './smart';
 import {createElement} from '../util';
 
-const createProfileLevelTemplate = (movies) => {
-  let rank = `novice`;
+const createProfileLevelTemplate = (movies, rank) => {
+
   let template = ``;
-  if (movies > 11 && movies < 21) {
-    rank = `fan`;
-  } else if (movies > 20) {
-    rank = `movie buff`;
-  }
 
   if (movies > 0) {
     template = `
@@ -27,22 +22,41 @@ const createProfileLevelTemplate = (movies) => {
   return template;
 };
 
-export default class ProfileLevelView extends AbstractView {
+export default class ProfileLevelView extends Smart {
 
-  getTemplate(moviesAmount) {
-    return createProfileLevelTemplate(moviesAmount);
+  constructor(moviesAmount) {
+    super();
+    this._moviesAmount = moviesAmount;
+    this._rank = `novice`;
   }
 
-  getElement(moviesAmount) {
+  getTemplate() {
+    return createProfileLevelTemplate(this._moviesAmount, this.getRank());
+  }
+
+  getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate(moviesAmount));
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;
   }
 
-  destroy() {
-    this._element.remove();
-    this._element = null;
+  setMoviesAmount(moviesAmount) {
+    this._moviesAmount = moviesAmount;
+  }
+
+  getRank() {
+    if (this._moviesAmount > 11 && this._moviesAmount < 21) {
+      this._rank = `fan`;
+    } else if (this._moviesAmount > 20) {
+      this._rank = `movie buff`;
+    }
+
+    return this._rank;
+  }
+
+  restoreHandlers() {
+    return;
   }
 }

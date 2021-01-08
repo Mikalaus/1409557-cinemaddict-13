@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {createElement} from '../util';
+import {createElement, parseRuntimeToString} from '../util';
 
 const createFilmCardTemplate = (film) => {
 
@@ -24,7 +24,7 @@ const createFilmCardTemplate = (film) => {
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${yearOfProduction}</span>
-      <span class="film-card__duration">${duration}</span>
+      <span class="film-card__duration">${parseRuntimeToString(duration)}</span>
       <span class="film-card__genre">${genre.join(`, `)}</span>
     </p>
     <img src=${posterURL} alt="" class="film-card__poster">
@@ -78,35 +78,22 @@ export default class FilmCardView extends AbstractView {
 
     this._addToWatchButton.addEventListener(`click`, () => {
 
-      if (this._filmInfo.isAddedToWatchlist) {
-        this._filmInfo.isAddedToWatchlist = false;
-      } else {
-        this._filmInfo.isAddedToWatchlist = true;
-      }
+      this._filmInfo.isAddedToWatchlist = !this._filmInfo.isAddedToWatchlist;
       this._addToWatchButton.classList.toggle(this._activeButtonClass);
       this._callback.watchlist();
     });
 
     this._addToHistoryButton.addEventListener(`click`, () => {
 
-      if (this._filmInfo.isWatched) {
-        this._filmInfo.isWatched = false;
-      } else {
-        this._filmInfo.isWatched = true;
-      }
+      this._filmInfo.isWatched = !this._filmInfo.isWatched;
       this._addToHistoryButton.classList.toggle(this._activeButtonClass);
       this._callback.history();
     });
 
     this._addFavouritesButton.addEventListener(`click`, () => {
 
-      if (this._filmInfo.isFavourite) {
-        this._filmInfo.isFavourite = false;
+      this._filmInfo.isFavourite = !this._filmInfo.isFavourite;
 
-      } else {
-        this._filmInfo.isFavourite = true;
-
-      }
       this._addFavouritesButton.classList.toggle(this._activeButtonClass);
       this._callback.favourites();
     });

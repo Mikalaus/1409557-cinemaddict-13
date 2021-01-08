@@ -12,13 +12,18 @@ import {
   FiltersList
 } from '../const';
 
-export default class FilterPresenter {
-  constructor(MoviesModel, updateFilms) {
+import StatsView from '../view/stats';
+
+export default class MenuPresenter {
+  constructor(MoviesModel, updateFilms, userStats) {
     this._filmModel = MoviesModel;
+    this._userStatsView = userStats;
+    this._stats = new StatsView(this._userStatsView.getRank(), this._filmModel);
     this._filtersModel = new FiltersModel();
     this._globalFilters = new Map();
     this._localFilters = new Map();
-    this._menu = new MenuView(MoviesModel.getFilms());
+    this._statsClickHandler = this._statsClickHandler.bind(this);
+    this._menu = new MenuView(MoviesModel.getFilms(), this._stats, this._statsClickHandler);
     this._container = document.querySelector(`.main`);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._filtersModel.addObserver(this._handleModelEvent);
@@ -26,9 +31,10 @@ export default class FilterPresenter {
     this._setFilterSortFunction = this._setFilterSortFunction.bind(this);
     this.renderFilmList = updateFilms;
     this._previousSort = ``;
+    this._defaultSortClass = `main-navigation__item`;
   }
 
-  init() {
+  init(filmsContainers) {
     renderElement(this._container, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     this._navFilters = document.querySelectorAll(`.main-navigation__item`);
 
@@ -52,6 +58,8 @@ export default class FilterPresenter {
     this._previousFilter = Array.from;
 
     this._filmModel.setSortedFilms(this._previousFilter);
+
+    this._filmsContainers = filmsContainers;
   }
 
   getMenu() {
@@ -60,6 +68,17 @@ export default class FilterPresenter {
 
   _handleModelEvent() {
     this.renderFilmList(this._filtersModel.getFilter(), this._filmModel.getSortedFilms());
+  }
+
+  _statsClickHandler() {
+    this._menu._element.querySelector(`.sort`).classList.add(`visually-hidden`);
+    renderElement(this._menu._element, this._stats.getElement(), RenderPosition.BEFOREEND);
+    this._filmsContainers.forEach((container) => {
+      container.classList.add(`visually-hidden`);
+    });
+    this._stats.setChart();
+    document.querySelector(`.${this._defaultSortClass}--active`).classList.remove(`${this._defaultSortClass}--active`);
+    this._menu._element.querySelector(`a[href="#stats"]`).classList.add(`main-navigation__additional--active`);
   }
 
   /**
@@ -75,15 +94,27 @@ export default class FilterPresenter {
       this._defaultSortClass = filter.classList.item(0);
       this._previousSort = document.querySelector(`.${this._defaultSortClass}--active`);
       if (this._previousSort !== filter) {
-        document.querySelector(`.${this._defaultSortClass}--active`).classList.remove(`${this._defaultSortClass}--active`);
+        if (this._previousSort) {
+          this._previousSort.classList.remove(`${this._defaultSortClass}--active`);
+        }
         filter.classList.add(`${this._defaultSortClass}--active`);
         if (`${this._defaultSortClass}` === NAV_BUTTON_CLASS) {
           this._previousFilter = sortFunc;
           this._filmModel.setSortedFilms(this._sortFunc);
           this._resetDefaultSorting();
+          if (this._stats._element) {
+            this._stats.destroy();
+            this._filmsContainers.forEach((container) => {
+              container.classList.remove(`visually-hidden`);
+              document.querySelector(`a[href="#stats"]`).classList.remove(`main-navigation__additional--active`);
+            });
+            this._menu._element.querySelector(`.sort`).classList.remove(`visually-hidden`);
+          }
+        } else {
+          this._filmModel.setSortedFilms(this._sortFunc);
         }
       }
-      this._filtersModel.setFilter(sortFunc);
+      this._filtersModel.setFilter(this._sortFunc);
     });
   }
 

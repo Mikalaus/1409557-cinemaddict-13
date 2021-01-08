@@ -13,7 +13,7 @@ import {
 } from '../util';
 
 import {moviesAmount} from '../mocs/rating-and-stats';
-import FilterPresenter from './filters';
+import MenuPresenter from './menu';
 
 import ListExtraView from '../view/list--extra';
 import ProfileLevelView from '../view/profile-level';
@@ -34,10 +34,14 @@ export default class BoardPresenter {
 
     this._filmModel = filmModel;
 
-    this._filterPresenter = new FilterPresenter(this._filmModel, this._renderFilteredFilmCards);
-    this._filterPresenter.renderFilmList = this._filterPresenter.renderFilmList.bind(this);
+    this._profileLevel = new ProfileLevelView(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length);
+
+    this._menuPresenter = new MenuPresenter(this._filmModel, this._renderFilteredFilmCards, this._profileLevel);
+
+    this._menuPresenter.renderFilmList = this._menuPresenter.renderFilmList.bind(this);
 
     this._filtersModel = new FiltersModel(this._filmModel.getFilms().slice());
+
     /**
      * сохранение сгенерированного массива данных в отдельный блок, для сохранения информации при фильтрации
      */
@@ -51,7 +55,7 @@ export default class BoardPresenter {
     this._filmList = new ListView(this._filmModel.getFilms().slice());
     this._topRated = new ListExtraView(TOP_RATED);
     this._mostCommented = new ListExtraView(MOST_COMMENTED);
-    this._menu = this._filterPresenter.getMenu();
+    this._menu = this._menuPresenter.getMenu();
 
     this._films = null;
 
@@ -73,7 +77,6 @@ export default class BoardPresenter {
     this._updateWatchlist = this._updateWatchlist.bind(this);
     this._updateHistoryList = this._updateHistoryList.bind(this);
     this._updateFavourites = this._updateFavourites.bind(this);
-    this._profileLevel = new ProfileLevelView();
   }
 
   init() {
@@ -89,6 +92,9 @@ export default class BoardPresenter {
       renderElement(this._films, this._topRated.getElement(), RenderPosition.BEFOREEND);
       renderElement(this._films, this._mostCommented.getElement(), RenderPosition.BEFOREEND);
     }
+
+    this._filmsListContainers = this._main.querySelectorAll(`.films-list`);
+
     renderElement(this._footer, new MoviesStatsView(moviesAmount).getElement(), RenderPosition.BEFOREEND);
 
     this._filmsList = this._main.querySelector(`.films-list`);
@@ -107,7 +113,7 @@ export default class BoardPresenter {
 
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
 
-    this._filterPresenter.init();
+    this._menuPresenter.init(this._filmsListContainers);
   }
 
   /**
@@ -253,23 +259,25 @@ export default class BoardPresenter {
   }
 
   _updateWatchlist() {
-    this._menu._addWatchlistButton.innerHTML = FiltersList.sortWatchlist([...this._filteredFilmCards]).length;
+    this._menu._addWatchlistButton.innerHTML = FiltersList.sortWatchlist(this._filmModel.getFilms().slice()).length;
     if (this._menu._addWatchlistButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortWatchlist, this._filteredFilmCards);
     }
   }
 
   _updateHistoryList() {
-    this._menu._addHistoryListButton.innerHTML = FiltersList.sortHistory([...this._filteredFilmCards]).length;
-    this._profileLevel.destroy();
-    renderElement(this._header, this._profileLevel.getElement(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
+    this._menu._addHistoryListButton.innerHTML = FiltersList.sortHistory(this._filmModel.getFilms().slice()).length;
+    this._profileLevel.setMoviesAmount(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length);
+    this._profileLevel.updateElement();
+    this._menuPresenter._stats.updateData({rank: this._profileLevel.getRank()}, true);
+    renderElement(this._header, this._profileLevel.getElement(), RenderPosition.BEFOREEND);
     if (this._menu._addHistoryListButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortHistory, this._filteredFilmCards);
     }
   }
 
   _updateFavourites() {
-    this._menu._addFavouriteListButton.innerHTML = FiltersList.sortFavourites([...this._filteredFilmCards]).length;
+    this._menu._addFavouriteListButton.innerHTML = FiltersList.sortFavourites(this._filmModel.getFilms().slice()).length;
     if (this._menu._addFavouriteListButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortFavourites, this._filteredFilmCards);
     }

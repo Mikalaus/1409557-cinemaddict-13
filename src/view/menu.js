@@ -1,7 +1,6 @@
 import AbstractView from './abstract';
 import {createElement} from '../util';
-import {SORT_BUTTON_CLASS, FiltersList} from '../const';
-
+import {FiltersList} from '../const';
 
 const createMenuTemplate = (filmList) => {
   const watchlist = FiltersList.sortWatchlist([...filmList]).length;
@@ -9,7 +8,7 @@ const createMenuTemplate = (filmList) => {
   const favourites = FiltersList.sortFavourites([...filmList]).length;
 
   return `
-  <div>
+  <div class="menu-container">
     <nav class="main-navigation">
       <div class="main-navigation__items">
         <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
@@ -30,23 +29,34 @@ const createMenuTemplate = (filmList) => {
 };
 
 export default class MenuView extends AbstractView {
-  constructor(filmList) {
+  constructor(filmList, stats, statsClickCallback) {
     super();
+    this._stats = stats;
     this._filmList = filmList;
     this._activeClass = `main-navigation__item--active`;
+    this._statsClickHandler = this._statsClickHandler.bind(this);
+    this._callback.stats = statsClickCallback;
   }
 
   getTemplate() {
     return createMenuTemplate(this._filmList);
   }
 
+  _statsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.stats();
+  }
+
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
+      this._statsOpenButton = this._element.querySelector(`a[href="#stats"]`);
       this._addWatchlistButton = this._element.querySelector(`a[href="#watchlist"] span`);
       this._addHistoryListButton = this._element.querySelector(`a[href="#history"] span`);
       this._addFavouriteListButton = this._element.querySelector(`a[href="#favorites"] span`);
     }
+
+    this._statsOpenButton.addEventListener(`click`, this._statsClickHandler);
 
     return this._element;
   }

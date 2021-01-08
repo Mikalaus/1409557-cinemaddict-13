@@ -102,7 +102,7 @@ const generateFilmCard = () => {
 
     yearOfProduction: getRandomInteger(1970, 2020),
 
-    duration: `${getRandomInteger(1, 3)}h ${getRandomInteger(0, 59)}m`,
+    duration: getRandomInteger(0, 230),
 
     genre: getRandomElementsFromArray(GENRE),
 
