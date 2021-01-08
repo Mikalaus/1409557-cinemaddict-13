@@ -69,6 +69,11 @@ const parseRuntimeToString = (duration) => {
   }
 };
 
+const capitalizeWord = (str) => {
+
+  return str[0].toUpperCase() + str.slice(1);
+};
+
 export {
   getRandomElementFromArray,
   getRandomInteger,
@@ -77,5 +82,6 @@ export {
   renderElement,
   createElement,
   RenderPosition,
-  parseRuntimeToString
+  parseRuntimeToString,
+  capitalizeWord
 };

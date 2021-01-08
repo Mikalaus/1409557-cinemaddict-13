@@ -58,7 +58,7 @@ const NAV_BUTTON_CLASS = `main-navigation__item`;
 /**
  * ограничение по максимальному кол-ву карточек из моков
  */
-const FILMS_LIMIT = 17;
+const FILMS_LIMIT = 38;
 
 const PopupMode = {
   OPENED: true,

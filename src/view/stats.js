@@ -1,4 +1,4 @@
-import {parseRuntimeToString} from '../util';
+import {parseRuntimeToString, capitalizeWord} from '../util';
 import {FiltersList} from '../const';
 import Smart from './smart';
 import Chart from "chart.js";
@@ -58,18 +58,18 @@ const createStatsTemplate = (rank, moviesAmount, totalDuration, topGenre) => {
   `;
 };
 
-const renderFilmsChart = (genres) => {
+const renderFilmsChart = (genres, count) => {
   const BAR_HEIGHT = 50;
   const statisticCtx = document.querySelector(`.statistic__chart`);
 
-  statisticCtx.height = BAR_HEIGHT * [...genres.keys()].length;
+  statisticCtx.height = BAR_HEIGHT * genres.length;
 
   return new Chart(statisticCtx, {
     type: `horizontalBar`,
     data: {
-      labels: [...genres.keys()],
+      labels: genres,
       datasets: [{
-        data: [...genres.values()],
+        data: count,
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -149,7 +149,11 @@ export default class StatsView extends Smart {
   }
 
   setChart() {
-    this._filmsChart = renderFilmsChart(this._data.genres);
+    this._keys = [...this._genresCount.keys()];
+    for (let i = 0; i < this._keys.length; i++) {
+      this._keys[i] = capitalizeWord(this._keys[i]);
+    }
+    this._filmsChart = renderFilmsChart(this._keys, [...this._genresCount.values()]);
   }
 
   _getTotalDuration() {
