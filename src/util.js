@@ -62,7 +62,7 @@ const parseRuntimeToString = (duration) => {
   const minutes = duration % 60;
   const hours = (duration - minutes) / 60;
 
-  if (hours > 0) {
+  if (hours > 0) { // тернарник
     return `${hours}h ${minutes}m`;
   } else {
     return `${minutes}m`;

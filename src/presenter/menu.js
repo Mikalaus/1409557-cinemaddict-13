@@ -38,7 +38,7 @@ export default class MenuPresenter {
     renderElement(this._container, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     this._navFilters = document.querySelectorAll(`.main-navigation__item`);
 
-    this._globalFilters.set(`all movies`, [this._navFilters[0], Array.from]);
+    this._globalFilters.set(`all movies`, [this._navFilters[0], Array.from]); // словарь для индексов
     this._globalFilters.set(`watchlist`, [this._navFilters[1], FiltersList.sortWatchlist]);
     this._globalFilters.set(`history`, [this._navFilters[2], FiltersList.sortHistory]);
     this._globalFilters.set(`favourites`, [this._navFilters[3], FiltersList.sortFavourites]);
@@ -71,6 +71,7 @@ export default class MenuPresenter {
   }
 
   _statsClickHandler() {
+    this._defaultSortClass = `main-navigation__item`;
     this._menu._element.querySelector(`.sort`).classList.add(`visually-hidden`);
     renderElement(this._menu._element, this._stats.getElement(), RenderPosition.BEFOREEND);
     this._filmsContainers.forEach((container) => {
@@ -94,22 +95,31 @@ export default class MenuPresenter {
       this._defaultSortClass = filter.classList.item(0);
       this._previousSort = document.querySelector(`.${this._defaultSortClass}--active`);
       if (this._previousSort !== filter) {
+
         if (this._previousSort) {
           this._previousSort.classList.remove(`${this._defaultSortClass}--active`);
         }
+
         filter.classList.add(`${this._defaultSortClass}--active`);
+
         if (`${this._defaultSortClass}` === NAV_BUTTON_CLASS) {
+
           this._previousFilter = sortFunc;
           this._filmModel.setSortedFilms(this._sortFunc);
           this._resetDefaultSorting();
+
           if (this._stats._element) {
+
             this._stats.destroy();
+
             this._filmsContainers.forEach((container) => {
               container.classList.remove(`visually-hidden`);
               document.querySelector(`a[href="#stats"]`).classList.remove(`main-navigation__additional--active`);
             });
+
             this._menu._element.querySelector(`.sort`).classList.remove(`visually-hidden`);
           }
+
         } else {
           this._filmModel.setSortedFilms(this._sortFunc);
         }

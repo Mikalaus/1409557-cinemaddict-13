@@ -1,7 +1,10 @@
+import {EmojiInfo} from '../const';
 import {createElement} from '../util';
 import {createCommentMocInfo} from '../mocs/films';
 import Abstract from './abstract';
 import he from "he";
+import dayjs from '../../node_modules/dayjs';
+import {nanoid} from 'nanoid';
 
 const createFilmPopupComment = (commentsList, addedByUser) => {
   let commentList = ``;
@@ -9,7 +12,7 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
     const {src, alt, text} = commentsList;
     const {author, publicationDate} = createCommentMocInfo(1)[0];
     commentList = `
-      <li class="film-details__comment">
+      <li class="film-details__comment id="${nanoid()}">
         <span class="film-details__comment-emoji">
           <img src="${src}" width="55" height="55" alt="${alt}">
         </span>
@@ -25,17 +28,17 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
       `;
   } else {
     for (let comment of commentsList) {
-      const {emoji: {src, alt}, text, author, publicationDate} = comment;
+      const {id, emotion, text, author, publicationDate} = comment;
       commentList += `
-      <li class="film-details__comment">
+      <li class="film-details__comment id="${id}">
         <span class="film-details__comment-emoji">
-          <img src="${src}" width="55" height="55" alt="${alt}">
+          <img src="${EmojiInfo[emotion].src}" width="55" height="55" alt="${EmojiInfo[emotion].alt}">
         </span>
         <div>
           <p class="film-details__comment-text">${text}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${publicationDate}</span>
+            <span class="film-details__comment-day">${dayjs(publicationDate).format(`HH:mm DD/MM/YYYY`)}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -51,11 +54,11 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
 
 export default class CommentView extends Abstract {
 
-  constructor(commentsList, commentsCountContainer, addedByUser = false) {
+  constructor(commentsCountContainer, commentsList, addedByUser = false) {
     super();
 
-    this._commentsList = commentsList;
     this._addedByUser = addedByUser;
+    this._commentsList = commentsList;
     this._commentsCountContainer = commentsCountContainer;
   }
 
@@ -74,7 +77,7 @@ export default class CommentView extends Abstract {
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(createFilmPopupComment(this._commentsList, this._addedByUser));
+      this._element = createElement(this.getTemplate());
     }
 
     this._deleteButtons = this._element.querySelectorAll(`.film-details__comment-delete`);

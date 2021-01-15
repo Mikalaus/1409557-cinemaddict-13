@@ -1,6 +1,10 @@
+import CommentsModel from '../model/comments';
 import SmartView from './smart';
 import CommentView from './popup--comment';
 import {createFilmPopupGenres} from './popup-genres';
+import dayjs from '../../node_modules/dayjs';
+import Api from '../api';
+import {AUTHORIZATION, END_POINT} from '../const';
 
 import {
   createElement,
@@ -50,15 +54,15 @@ const createFilmPopupTemplate = (filmInfo) => {
     duration,
     genre,
     posterURL,
-    commentsAmount,
+    comments,
     originalTitle,
     producer,
     screenwriter,
     stars,
     country,
-    fullDescription,
+    description,
     ageLimit,
-    date,
+    yearOfProduction,
     isWatched,
     isAddedToWatchlist,
     isFavourite
@@ -105,7 +109,7 @@ const createFilmPopupTemplate = (filmInfo) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${date}</td>
+                <td class="film-details__cell">${dayjs(yearOfProduction).format(`DD MMMM YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -123,7 +127,7 @@ const createFilmPopupTemplate = (filmInfo) => {
             </table>
 
             <p class="film-details__film-description">
-              ${fullDescription}
+              ${description}
             </p>
           </div>
         </div>
@@ -142,7 +146,7 @@ const createFilmPopupTemplate = (filmInfo) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsAmount}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           </ul>
@@ -166,6 +170,10 @@ export default class PopupView extends SmartView {
     this._closeBtn = null;
     this._filmCard = filmCard;
     this._commentsAmount = cardInfo.commentsAmount;
+
+    this._api = new Api(END_POINT, AUTHORIZATION);
+
+    this._commentsModel = new CommentsModel();
 
     this._clickHandler = this._clickHandler.bind(this);
     this._commentDispatchHandler = this._commentDispatchHandler.bind(this);
@@ -193,10 +201,13 @@ export default class PopupView extends SmartView {
       this._commentsCountContainer = this._element.querySelector(`.film-details__comments-count`);
     }
 
-    renderElement(this._commentsContainer, new CommentView(this._cardInfo.comments, this._commentsCountContainer).getElement(), RenderPosition.BEFOREEND);
-
     this._setSortButtonsClickHandler();
     this.restoreHandlers();
+
+    this._api.getComments(this._cardInfo.id)
+      .then((comments) => {
+        renderElement(this._commentsContainer, new CommentView(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
+      });
 
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, (evt) => {
       if (evt.keyCode === ENTER_KEY) {
@@ -227,10 +238,10 @@ export default class PopupView extends SmartView {
   _commentDispatchHandler(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
 
-      const userComment = new CommentView(this._form, this._commentsCountContainer, true).getElement();
+      const userComment = new CommentView(this._commentsCountContainer, this._form, true);
       this._commentsList = this._commentsContainer;
 
-      renderElement(this._commentsList, userComment, RenderPosition.BEFOREEND);
+      renderElement(this._commentsList, userComment.getElement(), RenderPosition.BEFOREEND);
       this._newCommentInput.remove();
       renderTemplate(this._commentsContainer, newCommentInputTemplate, RenderPosition.AFTEREND);
       this._newCommentInput = this._element.querySelector(`.film-details__new-comment`);

@@ -1,13 +1,15 @@
+import {AUTHORIZATION, END_POINT} from './const';
 import MoviesModel from './model/movies';
 import BoardPresenter from './presenter/board';
+import Api from "./api";
 
-import {generateFilmCards} from './mocs/films';
-import {FILMS_LIMIT} from './const';
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new MoviesModel();
-
-filmsModel.setFilms(generateFilmCards(FILMS_LIMIT));
-
-const board = new BoardPresenter(filmsModel);
-
-board.init();
+let board;
+api.getMovies()
+  .then((movies) => {
+    filmsModel.setFilms(movies);
+    board = new BoardPresenter(filmsModel);
+    board.init();
+  });

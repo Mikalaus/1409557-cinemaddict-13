@@ -1,5 +1,7 @@
 import AbstractView from './abstract';
 import {createElement, parseRuntimeToString} from '../util';
+import dayjs from '../../node_modules/dayjs';
+
 
 const createFilmCardTemplate = (film) => {
 
@@ -12,7 +14,7 @@ const createFilmCardTemplate = (film) => {
     genre,
     posterURL,
     description,
-    commentsAmount,
+    comments,
     isWatched,
     isAddedToWatchlist,
     isFavourite
@@ -23,13 +25,13 @@ const createFilmCardTemplate = (film) => {
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${yearOfProduction}</span>
+      <span class="film-card__year">${dayjs(yearOfProduction).format(`DD MMMM YYYY`)}</span>
       <span class="film-card__duration">${parseRuntimeToString(duration)}</span>
       <span class="film-card__genre">${genre.join(`, `)}</span>
     </p>
     <img src=${posterURL} alt="" class="film-card__poster">
     <p class="film-card__description">${description.length > 140 ? description.substr(0, 139) + `...` : description}</p>
-    <a class="film-card__comments">${commentsAmount} comments</a>
+    <a class="film-card__comments">${comments.length} comments</a>
     <div class="film-card__controls">
       <button class="film-card__controls-item ${isAddedToWatchlist ? `film-card__controls-item--active` : ``} button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
       <button class="film-card__controls-item ${isWatched ? `film-card__controls-item--active` : ``} button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
@@ -81,6 +83,7 @@ export default class FilmCardView extends AbstractView {
       this._filmInfo.isAddedToWatchlist = !this._filmInfo.isAddedToWatchlist;
       this._addToWatchButton.classList.toggle(this._activeButtonClass);
       this._callback.watchlist();
+
     });
 
     this._addToHistoryButton.addEventListener(`click`, () => {

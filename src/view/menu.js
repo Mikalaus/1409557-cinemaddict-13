@@ -35,7 +35,7 @@ export default class MenuView extends AbstractView {
     this._filmList = filmList;
     this._activeClass = `main-navigation__item--active`;
     this._statsClickHandler = this._statsClickHandler.bind(this);
-    this._callback.stats = statsClickCallback;
+    this._callback.stats = statsClickCallback; // именование поменять
   }
 
   getTemplate() {

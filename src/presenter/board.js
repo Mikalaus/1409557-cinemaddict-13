@@ -4,8 +4,12 @@ import {
   MOST_COMMENTED,
   DEFAULT_RENDER_INDEX,
   PopupMode,
-  FiltersList
+  FiltersList,
+  AUTHORIZATION,
+  END_POINT
 } from '../const';
+
+import Api from '../api';
 
 import {
   renderElement,
@@ -77,6 +81,8 @@ export default class BoardPresenter {
     this._updateWatchlist = this._updateWatchlist.bind(this);
     this._updateHistoryList = this._updateHistoryList.bind(this);
     this._updateFavourites = this._updateFavourites.bind(this);
+
+    this._api = new Api(END_POINT, AUTHORIZATION);
   }
 
   init() {
@@ -88,12 +94,12 @@ export default class BoardPresenter {
     renderElement(this._header, this._profileLevel.getElement(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
     renderElement(this._films, this._filmList.getElement(), RenderPosition.AFTERBEGIN);
 
+    this._filmsListContainers = this._main.querySelectorAll(`.films-list`);
+
     if (this._filmModel.getFilms().slice().length) {
       renderElement(this._films, this._topRated.getElement(), RenderPosition.BEFOREEND);
       renderElement(this._films, this._mostCommented.getElement(), RenderPosition.BEFOREEND);
     }
-
-    this._filmsListContainers = this._main.querySelectorAll(`.films-list`);
 
     renderElement(this._footer, new MoviesStatsView(moviesAmount).getElement(), RenderPosition.BEFOREEND);
 
@@ -103,15 +109,16 @@ export default class BoardPresenter {
     /**
      * рендер изначальных фильмов в разметку
      */
-    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, FiltersList.sortByComments(this._filmModel.getFilms().slice()));
-    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, FiltersList.sortByRating(this._filmModel.getFilms().slice()));
     this._renderFilmList(this._filmsList, FilmListLimit.DEFAULT, this._filteredFilmCards);
 
     this._filmList.setContainerClickHandler(this._filmListClickHandler);
-    this._topRated.setContainerClickHandler(this._filmListClickHandler);
-    this._mostCommented.setContainerClickHandler(this._filmListClickHandler);
 
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
+
+    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, FiltersList.sortByComments(this._filmModel.getFilms().slice()));
+    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, FiltersList.sortByRating(this._filmModel.getFilms().slice()));
+    this._topRated.setContainerClickHandler(this._filmListClickHandler);
+    this._mostCommented.setContainerClickHandler(this._filmListClickHandler);
 
     this._menuPresenter.init(this._filmsListContainers);
   }
@@ -166,7 +173,7 @@ export default class BoardPresenter {
    * @param {event} evt
    */
   _closePopup(evt) {
-    if (evt.button === 0 || evt.keyCode === 27) {
+    if (evt.button === 0 || evt.keyCode === 27) { // заменить на значения
       const popup = this._footer.querySelector(`.film-details`);
       this._body.classList.remove(`hide-overflow`);
       popup.remove();
