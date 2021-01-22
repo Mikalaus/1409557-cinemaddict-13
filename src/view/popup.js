@@ -267,6 +267,9 @@ export default class PopupView extends SmartView {
         .catch((error) => {
           this._newCommentInput.classList.add(`error-animation`);
           this._textInput.removeAttribute(`disabled`, `disabled`);
+          setTimeout(() => {
+            this._newCommentInput.classList.remove(`error-animation`);
+          }, 1200);
           this._emojiInputs.forEach((emoji) => {
             emoji.removeAttribute(`disabled`, `disabled`);
           });

@@ -91,7 +91,7 @@ const PopupMode = {
   CLOSED: false
 };
 
-const AUTHORIZATION = `Basic fsgnasljgkljksmm3do`;
+const AUTHORIZATION = `Basic dfmdsfmmsmm3do`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const API = new Api(END_POINT, AUTHORIZATION);

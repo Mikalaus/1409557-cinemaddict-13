@@ -232,8 +232,11 @@ export default class StatsView extends Smart {
     });
 
     this._genresCount = new Map(Object.entries(this._genresCount).sort((a, b) => b[1] - a[1]));
-
-    return this._genresCount;
+    if (this._genres.length > 0) {
+      return this._genresCount;
+    } else {
+      return ``;
+    }
   }
 
   _getMoviesAmount() {
