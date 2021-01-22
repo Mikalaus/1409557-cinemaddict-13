@@ -38,15 +38,15 @@ const createStatsTemplate = (rank, moviesAmount, totalDuration, topGenre) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${moviesAmount} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text"><span class="statistics__movies-amount">${moviesAmount}</span> <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${totalDuration}</p>
+        <p class="statistic__item-text"><span class="statistics__total-duration">${totalDuration}</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${topGenre}</p>
+        <p class="statistic__item-text"><span class="statistics__top-genre">${topGenre}</span></p>
       </li>
     </ul>
 
@@ -60,6 +60,7 @@ const createStatsTemplate = (rank, moviesAmount, totalDuration, topGenre) => {
 
 const renderFilmsChart = (genres, count) => {
   const BAR_HEIGHT = 50;
+
   const statisticCtx = document.querySelector(`.statistic__chart`);
 
   statisticCtx.height = BAR_HEIGHT * genres.length;
@@ -127,6 +128,8 @@ export default class StatsView extends Smart {
     super();
     this._rank = rank;
     this._filmModel = filmModel;
+    this._chart = null;
+    this._filmsList = this._filmModel.getFilms().slice();
     this._data = {
       rank: this._rank,
       duration: this._getTotalDuration(),
@@ -143,9 +146,54 @@ export default class StatsView extends Smart {
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
+      this._moviesAmount = this._element.querySelector(`.statistics__movies-amount`);
+      this._totalDuration = this._element.querySelector(`.statistics__total-duration`);
+      this._topGenre = this._element.querySelector(`.statistics__top-genre`);
+      this._setHandlers();
     }
 
     return this._element;
+  }
+
+  _updateInfo() {
+    this._moviesAmount.textContent = this._data.moviesAmount;
+    this._totalDuration.textContent = this._data.duration;
+    this._topGenre.textContent = this._data.genres;
+  }
+
+  _renderStats() {
+    this.updateData({duration: this._getTotalDuration(), moviesAmount: this._getMoviesAmount(), genres: this._getGenres()}, true);
+    this._updateInfo();
+    this._filmsChart.destroy();
+    this.setChart();
+  }
+
+  _setHandlers() {
+    const now = new Date();
+    this._element.querySelector(`#statistic-today`).addEventListener(`change`, () => {
+      this._filmsList = FiltersList.sortByTime(this._filmModel.getFilms(), new Date(now - 24 * 3600 * 1000));
+      this._renderStats();
+    });
+
+    this._element.querySelector(`#statistic-week`).addEventListener(`change`, () => {
+      this._filmsList = FiltersList.sortByTime(this._filmModel.getFilms(), new Date(now - 7 * 24 * 3600 * 1000));
+      this._renderStats();
+    });
+
+    this._element.querySelector(`#statistic-month`).addEventListener(`change`, () => {
+      this._filmsList = FiltersList.sortByTime(this._filmModel.getFilms(), new Date(now - 30 * 24 * 3600 * 1000));
+      this._renderStats();
+    });
+
+    this._element.querySelector(`#statistic-year`).addEventListener(`change`, () => {
+      this._filmsList = FiltersList.sortByTime(this._filmModel.getFilms(), new Date(now - 365 * 24 * 3600 * 1000));
+      this._renderStats();
+    });
+
+    this._element.querySelector(`#statistic-all-time`).addEventListener(`change`, () => {
+      this._filmsList = this._filmModel.getFilms();
+      this._renderStats();
+    });
   }
 
   setChart() {
@@ -158,7 +206,7 @@ export default class StatsView extends Smart {
 
   _getTotalDuration() {
     let time = 0;
-    FiltersList.sortHistory(this._filmModel.getFilms().slice()).forEach((film) => {
+    FiltersList.sortHistory(this._filmsList).forEach((film) => {
       time += film.duration;
     });
 
@@ -167,7 +215,7 @@ export default class StatsView extends Smart {
 
   _getGenres() {
     this._genres = [];
-    FiltersList.sortHistory(this._filmModel.getFilms().slice()).forEach((film) => {
+    FiltersList.sortHistory(this._filmsList).forEach((film) => {
       this._genres.push(...film.genre);
     });
 
@@ -189,7 +237,7 @@ export default class StatsView extends Smart {
   }
 
   _getMoviesAmount() {
-    return FiltersList.sortHistory(this._filmModel.getFilms().slice()).length;
+    return FiltersList.sortHistory(this._filmsList).length;
   }
 
   restoreHandlers() {

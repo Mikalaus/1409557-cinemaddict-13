@@ -1,11 +1,21 @@
+const AUTHORS = [`Sherlock`, `Troll228`, `Tenderlybae`, `Hesus`, `Topa`];
+
+const getRandomElementFromArray = (arr) => {
+  return arr[getRandomInteger(0, arr.length - 1)];
+};
+
+const createCommentMocInfo = () => {
+  const comment = {
+    author: getRandomElementFromArray(AUTHORS),
+  };
+  return comment;
+};
+
+
 const RenderPosition = {
   BEFOREEND: `beforeend`,
   AFTERBEGIN: `afterbegin`,
   AFTEREND: `afterend`
-};
-
-const getRandomElementFromArray = (arr) => {
-  return arr[getRandomInteger(0, arr.length - 1)];
 };
 
 const getRandomElementsFromArray = (arr) => {
@@ -75,7 +85,6 @@ const capitalizeWord = (str) => {
 };
 
 export {
-  getRandomElementFromArray,
   getRandomInteger,
   getRandomElementsFromArray,
   renderTemplate,
@@ -83,5 +92,6 @@ export {
   createElement,
   RenderPosition,
   parseRuntimeToString,
-  capitalizeWord
+  capitalizeWord,
+  createCommentMocInfo
 };

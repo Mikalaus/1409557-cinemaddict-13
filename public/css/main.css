@@ -1104,3 +1104,15 @@ button {
   padding-top: 50px;
   padding-bottom: 50px;
 }
+
+@keyframes error {
+  0%{transform:rotate(-20deg);}
+  25%{transform:rotate(20deg);}
+  50%{transform:rotate(-20deg);}
+  75%{transform:rotate(20deg);}
+  100%{transform:rotate(0deg);}
+}
+
+.error-animation {
+  animation: error 1s ease-in-out;
+}

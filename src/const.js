@@ -44,6 +44,16 @@ const FiltersList = {
 
   sortFavourites: (arr) => {
     return [...arr].filter((film) => film.isFavourite);
+  },
+
+  sortByTime: (arr, time) => {
+    let sortedArr = [];
+    arr.forEach((item) => {
+      if (item.date > time) {
+        sortedArr.push(item);
+      }
+    });
+    return sortedArr;
   }
 };
 
@@ -81,7 +91,7 @@ const PopupMode = {
   CLOSED: false
 };
 
-const AUTHORIZATION = `Basic 12345asdfg`;
+const AUTHORIZATION = `Basic fsgnasljgkljksmm3do`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const API = new Api(END_POINT, AUTHORIZATION);
@@ -97,7 +107,5 @@ export {
   ENTER_KEY,
   FiltersList,
   EmojiInfo,
-  AUTHORIZATION,
-  END_POINT,
   API
 };

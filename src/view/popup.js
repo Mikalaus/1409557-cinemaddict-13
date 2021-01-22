@@ -169,7 +169,7 @@ export default class PopupView extends SmartView {
     this._menu = menu;
     this._closeBtn = null;
     this._filmCard = filmCard;
-    this._commentsAmount = cardInfo.commentsAmount;
+    this._commentsAmount = cardInfo.comments.length;
 
     this._api = API;
 
@@ -242,20 +242,41 @@ export default class PopupView extends SmartView {
       const userComment = new CommentView(this._commentsCountContainer, this._form, true);
       this._commentsList = this._commentsContainer;
 
-      renderElement(this._commentsList, userComment.getElement(), RenderPosition.BEFOREEND);
-      this._api.updateComment(userComment.getInfo(), this._cardInfo.id);
-      this._newCommentInput.remove();
-      renderTemplate(this._commentsContainer, newCommentInputTemplate, RenderPosition.AFTEREND);
-      this._newCommentInput = this._element.querySelector(`.film-details__new-comment`);
+      this._api.updateComment(userComment.getInfo(), this._cardInfo)
+        .then(() => {
+          renderElement(this._commentsList, userComment.getElement(), RenderPosition.BEFOREEND);
+          this._newCommentInput.remove();
+          renderTemplate(this._commentsContainer, newCommentInputTemplate, RenderPosition.AFTEREND);
+          this._newCommentInput = this._element.querySelector(`.film-details__new-comment`);
 
-      this.restoreHandlers();
-      this._form = {
-        src: ``,
-        alt: ``,
-        text: ``
-      };
+          this.restoreHandlers();
+          this._form = {
+            src: ``,
+            alt: ``,
+            text: ``
+          };
 
-      this._commentsCountContainer.textContent = ++this._commentsAmount;
+          this._api.getComments(this._cardInfo.id)
+            .then((comments) => {
+              this._commentsContainer.innerHTML = ``;
+              this._commentsCountContainer.textContent = comments.length;
+              this._commentsModel.setComments(comments);
+              renderElement(this._commentsContainer, new CommentView(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
+            });
+        })
+        .catch((error) => {
+          this._newCommentInput.classList.add(`error-animation`);
+          this._textInput.removeAttribute(`disabled`, `disabled`);
+          this._emojiInputs.forEach((emoji) => {
+            emoji.removeAttribute(`disabled`, `disabled`);
+          });
+          throw new Error(error);
+        });
+
+      this._textInput.setAttribute(`disabled`, `disabled`);
+      this._emojiInputs.forEach((emoji) => {
+        emoji.setAttribute(`disabled`, `disabled`);
+      });
     }
   }
 
@@ -264,9 +285,9 @@ export default class PopupView extends SmartView {
   }
 
   _setInputHandler() {
-    const textInput = this._element.querySelector(`.film-details__comment-input`);
-    textInput.addEventListener(`input`, () => {
-      this._form.text = textInput.value;
+    this._textInput = this._element.querySelector(`.film-details__comment-input`);
+    this._textInput.addEventListener(`input`, () => {
+      this._form.text = this._textInput.value;
     });
   }
 

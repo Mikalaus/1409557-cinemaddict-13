@@ -1,21 +1,22 @@
+import {API} from '../const';
 import {EmojiInfo} from '../const';
-import {createElement} from '../util';
-import {createCommentMocInfo} from '../mocs/films';
+import {createElement, createCommentMocInfo} from '../util';
 import Abstract from './abstract';
 import he from "he";
 import dayjs from '../../node_modules/dayjs';
 import {nanoid} from 'nanoid';
+
 
 const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
   let commentList = ``;
   let info;
   if (addedByUser) {
     const {src, text, alt} = commentsList;
-    const {author} = createCommentMocInfo(1)[0];
-    const publicationDate = dayjs(new Date()).format(`HH:mm DD/MM/YYYY`);
+    const {author} = createCommentMocInfo();
     const id = nanoid();
+    const now = new Date();
     commentList = `
-      <li class="film-details__comment id="${id}">
+      <li class="film-details__comment" id="${id}">
         <span class="film-details__comment-emoji">
           <img src="${src}" width="55" height="55" alt="${alt}">
         </span>
@@ -23,8 +24,8 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
           <p class="film-details__comment-text">${he.encode(text)}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${publicationDate}</span>
-            <button class="film-details__comment-delete">Delete</button>
+            <span class="film-details__comment-day">${dayjs(now).format(`HH:mm DD/MM/YYYY`)}</span>
+            <button type="button" class="film-details__comment-delete">Delete</button>
           </p>
         </div>
       </li>
@@ -34,14 +35,14 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
       id,
       author,
       comment: he.encode(text),
-      date: publicationDate,
+      date: now,
       emotion: src.slice(15, -4)
     };
   } else {
     for (let comment of commentsList) {
       const {id, emotion, text, author, publicationDate} = comment;
       commentList += `
-      <li class="film-details__comment id="${id}">
+      <li class="film-details__comment" id="${id}">
         <span class="film-details__comment-emoji">
           <img src="${EmojiInfo[emotion].src}" width="55" height="55" alt="${EmojiInfo[emotion].alt}">
         </span>
@@ -50,7 +51,7 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${dayjs(publicationDate).format(`HH:mm DD/MM/YYYY`)}</span>
-            <button class="film-details__comment-delete">Delete</button>
+            <button type="button" class="film-details__comment-delete">Delete</button>
           </p>
         </div>
       </li>
@@ -73,6 +74,7 @@ export default class CommentView extends Abstract {
     this._addedByUser = addedByUser;
     this._commentsList = commentsList;
     this._commentsCountContainer = commentsCountContainer;
+    this._api = API;
   }
 
   getTemplate(onlyInfo = false) {
@@ -82,8 +84,19 @@ export default class CommentView extends Abstract {
   _setDeleteButtonClickHandler() {
     this._deleteButtons.forEach((button) => {
       button.addEventListener(`click`, () => {
-        button.closest(`.film-details__comment`).remove();
-        this._commentsCountContainer.textContent = +this._commentsCountContainer.textContent - 1;
+        this._api.deleteComment(button.closest(`.film-details__comment`).id)
+          .then(() => {
+            button.closest(`.film-details__comment`).remove();
+            this._commentsCountContainer.textContent = +this._commentsCountContainer.textContent - 1;
+            button.removeAttribute(`disabled`, `disabled`);
+          })
+          .catch((error) => {
+            button.textContent = `Delete`;
+            button.removeAttribute(`disabled`, `disabled`);
+            throw new Error(error);
+          });
+        button.setAttribute(`disabled`, `disabled`);
+        button.textContent = `Deleting...`;
       });
     });
   }

@@ -15,4 +15,9 @@ export default class LoadingView extends Abstract {
   getTemplate() {
     return createLoadingTemplate();
   }
+
+  remove() {
+    this._element.remove();
+    this._element = null;
+  }
 }
