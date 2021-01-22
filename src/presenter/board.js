@@ -5,11 +5,8 @@ import {
   DEFAULT_RENDER_INDEX,
   PopupMode,
   FiltersList,
-  AUTHORIZATION,
-  END_POINT
+  API
 } from '../const';
-
-import Api from '../api';
 
 import {
   renderElement,
@@ -82,7 +79,7 @@ export default class BoardPresenter {
     this._updateHistoryList = this._updateHistoryList.bind(this);
     this._updateFavourites = this._updateFavourites.bind(this);
 
-    this._api = new Api(END_POINT, AUTHORIZATION);
+    this._api = API;
   }
 
   init() {
@@ -176,6 +173,7 @@ export default class BoardPresenter {
     if (evt.button === 0 || evt.keyCode === 27) { // заменить на значения
       const popup = this._footer.querySelector(`.film-details`);
       this._body.classList.remove(`hide-overflow`);
+      document.removeEventListener(`keyup`, this._popupComponent._commentDispatchHandler);
       popup.remove();
       document.removeEventListener(`keydown`, this._closePopup);
       this._popupMode = PopupMode.CLOSED;
@@ -201,15 +199,15 @@ export default class BoardPresenter {
 
       for (let card of this._filmModel.getFilms().slice()) {
         if (card.id === this._cardId) {
-          const popupComponent = new PopupView(
+          this._popupComponent = new PopupView(
               activeFilmCard,
               card,
               this._menu,
               this._updateWatchlist,
               this._updateHistoryList,
               this._updateFavourites);
-          renderElement(this._footer, popupComponent.getElement(), RenderPosition.BEFOREEND);
-          popupComponent.setCloseButtonClickHandler(this._closePopup);
+          renderElement(this._footer, this._popupComponent.getElement(), RenderPosition.BEFOREEND);
+          this._popupComponent.setCloseButtonClickHandler(this._closePopup);
           document.addEventListener(`keydown`, this._closePopup);
           break;
         }
@@ -265,14 +263,15 @@ export default class BoardPresenter {
     }
   }
 
-  _updateWatchlist() {
+  _updateWatchlist(movieInfo) {
     this._menu._addWatchlistButton.innerHTML = FiltersList.sortWatchlist(this._filmModel.getFilms().slice()).length;
     if (this._menu._addWatchlistButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortWatchlist, this._filteredFilmCards);
     }
+    this._api.updateMovie(movieInfo);
   }
 
-  _updateHistoryList() {
+  _updateHistoryList(movieInfo) {
     this._menu._addHistoryListButton.innerHTML = FiltersList.sortHistory(this._filmModel.getFilms().slice()).length;
     this._profileLevel.setMoviesAmount(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length);
     this._profileLevel.updateElement();
@@ -281,12 +280,14 @@ export default class BoardPresenter {
     if (this._menu._addHistoryListButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortHistory, this._filteredFilmCards);
     }
+    this._api.updateMovie(movieInfo);
   }
 
-  _updateFavourites() {
+  _updateFavourites(movieInfo) {
     this._menu._addFavouriteListButton.innerHTML = FiltersList.sortFavourites(this._filmModel.getFilms().slice()).length;
     if (this._menu._addFavouriteListButton.parentNode.classList.contains(this._menu._activeClass)) {
       this._renderFilteredFilmCards(FiltersList.sortFavourites, this._filteredFilmCards);
     }
+    this._api.updateMovie(movieInfo);
   }
 }

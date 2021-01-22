@@ -6,13 +6,16 @@ import he from "he";
 import dayjs from '../../node_modules/dayjs';
 import {nanoid} from 'nanoid';
 
-const createFilmPopupComment = (commentsList, addedByUser) => {
+const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
   let commentList = ``;
+  let info;
   if (addedByUser) {
-    const {src, alt, text} = commentsList;
-    const {author, publicationDate} = createCommentMocInfo(1)[0];
+    const {src, text, alt} = commentsList;
+    const {author} = createCommentMocInfo(1)[0];
+    const publicationDate = dayjs(new Date()).format(`HH:mm DD/MM/YYYY`);
+    const id = nanoid();
     commentList = `
-      <li class="film-details__comment id="${nanoid()}">
+      <li class="film-details__comment id="${id}">
         <span class="film-details__comment-emoji">
           <img src="${src}" width="55" height="55" alt="${alt}">
         </span>
@@ -26,6 +29,14 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
         </div>
       </li>
       `;
+
+    info = {
+      id,
+      author,
+      comment: he.encode(text),
+      date: publicationDate,
+      emotion: src.slice(15, -4)
+    };
   } else {
     for (let comment of commentsList) {
       const {id, emotion, text, author, publicationDate} = comment;
@@ -45,11 +56,13 @@ const createFilmPopupComment = (commentsList, addedByUser) => {
       </li>
       `;
     }
-
-    commentList = `<div>${commentList}</div>`;
   }
-
-  return commentList;
+  if (onlyInfo) {
+    return info;
+  } else {
+    commentList = `<div>${commentList}</div>`;
+    return commentList;
+  }
 };
 
 export default class CommentView extends Abstract {
@@ -62,8 +75,8 @@ export default class CommentView extends Abstract {
     this._commentsCountContainer = commentsCountContainer;
   }
 
-  getTemplate() {
-    return createFilmPopupComment(this._commentsList, this._addedByUser);
+  getTemplate(onlyInfo = false) {
+    return createFilmPopupComment(this._commentsList, this._addedByUser, onlyInfo);
   }
 
   _setDeleteButtonClickHandler() {
@@ -73,6 +86,10 @@ export default class CommentView extends Abstract {
         this._commentsCountContainer.textContent = +this._commentsCountContainer.textContent - 1;
       });
     });
+  }
+
+  getInfo() {
+    return this.getTemplate(true);
   }
 
   getElement() {

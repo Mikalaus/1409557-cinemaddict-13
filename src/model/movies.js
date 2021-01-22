@@ -62,20 +62,14 @@ export default class Movies extends Observer {
             "poster": movie.posterURL,
             "age_rating": movie.ageLimit,
             "director": movie.producer,
-            "writers": [
-              movie.screenwriter
-            ],
-            "actors": [
-              movie.stars
-            ],
+            "writers": movie.screenwriter,
+            "actors": movie.stars,
             "release": {
               "date": movie.yearOfProduction instanceof Date ? movie.yearOfProduction.toISOString() : null,
               "release_country": movie.country
             },
             "runtime": movie.duration,
-            "genre": [
-              movie.genre
-            ],
+            "genre": movie.genre,
             "description": movie.description
           },
           "user_details": {

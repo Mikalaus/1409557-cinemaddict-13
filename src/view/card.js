@@ -82,15 +82,14 @@ export default class FilmCardView extends AbstractView {
 
       this._filmInfo.isAddedToWatchlist = !this._filmInfo.isAddedToWatchlist;
       this._addToWatchButton.classList.toggle(this._activeButtonClass);
-      this._callback.watchlist();
-
+      this._callback.watchlist(this._filmInfo);
     });
 
     this._addToHistoryButton.addEventListener(`click`, () => {
 
       this._filmInfo.isWatched = !this._filmInfo.isWatched;
       this._addToHistoryButton.classList.toggle(this._activeButtonClass);
-      this._callback.history();
+      this._callback.history(this._filmInfo);
     });
 
     this._addFavouritesButton.addEventListener(`click`, () => {
@@ -98,7 +97,7 @@ export default class FilmCardView extends AbstractView {
       this._filmInfo.isFavourite = !this._filmInfo.isFavourite;
 
       this._addFavouritesButton.classList.toggle(this._activeButtonClass);
-      this._callback.favourites();
+      this._callback.favourites(this._filmInfo);
     });
   }
 }

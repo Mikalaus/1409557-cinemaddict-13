@@ -3,7 +3,8 @@ import MoviesModel from './model/movies';
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`
 };
 
 const SuccessHTTPStatusRange = {
@@ -43,6 +44,23 @@ export default class Api {
       .then(MoviesModel.adaptToClient);
   }
 
+  updateComment(comment, movieId) {
+    return this._load({
+      url: `comments/${movieId}`,
+      method: Method.POST,
+      body: JSON.stringify(CommentsModel.adaptToServer(comment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+
+      .then(Api.toJSON)
+      .then((response) => {
+        return {
+          movie: MoviesModel.adaptToClient(response.movie),
+          comments: response.comments.map(CommentsModel.adaptToClient)
+        };
+      });
+  }
+
   _load({
     url,
     method = Method.GET,
@@ -75,7 +93,6 @@ export default class Api {
   }
 
   static catchError(err) {
-    console.log (new Error(err));
     throw err;
   }
 }

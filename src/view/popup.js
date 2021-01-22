@@ -3,8 +3,8 @@ import SmartView from './smart';
 import CommentView from './popup--comment';
 import {createFilmPopupGenres} from './popup-genres';
 import dayjs from '../../node_modules/dayjs';
-import Api from '../api';
-import {AUTHORIZATION, END_POINT} from '../const';
+import {API} from '../const';
+
 
 import {
   createElement,
@@ -171,7 +171,7 @@ export default class PopupView extends SmartView {
     this._filmCard = filmCard;
     this._commentsAmount = cardInfo.commentsAmount;
 
-    this._api = new Api(END_POINT, AUTHORIZATION);
+    this._api = API;
 
     this._commentsModel = new CommentsModel();
 
@@ -206,6 +206,7 @@ export default class PopupView extends SmartView {
 
     this._api.getComments(this._cardInfo.id)
       .then((comments) => {
+        this._commentsModel.setComments(comments);
         renderElement(this._commentsContainer, new CommentView(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
       });
 
@@ -223,12 +224,12 @@ export default class PopupView extends SmartView {
 
     this._emojiInputs.forEach((input) => {
       input.addEventListener(`click`, () => {
-        this._form.src = `../../public/images/emoji/${[...input.id].slice(6).join(``)}.png`;
+        this._form.src = `./images/emoji/${[...input.id].slice(6).join(``)}.png`;
         this._form.alt = input.id;
 
         this._element.querySelector(`.film-details__add-emoji-label`).style.cssText =
         `
-          background: center url("../../public/images/emoji/${[...input.id].slice(6).join(``)}.png") no-repeat;
+          background: center url("./images/emoji/${[...input.id].slice(6).join(``)}.png") no-repeat;
           background-size: cover;
         `;
       });
@@ -242,6 +243,7 @@ export default class PopupView extends SmartView {
       this._commentsList = this._commentsContainer;
 
       renderElement(this._commentsList, userComment.getElement(), RenderPosition.BEFOREEND);
+      this._api.updateComment(userComment.getInfo(), this._cardInfo.id);
       this._newCommentInput.remove();
       renderTemplate(this._commentsContainer, newCommentInputTemplate, RenderPosition.AFTEREND);
       this._newCommentInput = this._element.querySelector(`.film-details__new-comment`);
@@ -291,7 +293,7 @@ export default class PopupView extends SmartView {
 
       this._filmCard.querySelector(`.film-card__controls-item--add-to-watchlist`).classList.toggle(`film-card__controls-item--active`);
 
-      this._callback.watchlist();
+      this._callback.watchlist(this._cardInfo);
     });
     this._element.querySelector(`#watched`).addEventListener(`click`, () => {
 
@@ -299,7 +301,7 @@ export default class PopupView extends SmartView {
 
       this._filmCard.querySelector(`.film-card__controls-item--mark-as-watched`).classList.toggle(`film-card__controls-item--active`);
 
-      this._callback.history();
+      this._callback.history(this._cardInfo);
     });
     this._element.querySelector(`#favorite`).addEventListener(`click`, () => {
 
@@ -307,7 +309,7 @@ export default class PopupView extends SmartView {
 
       this._filmCard.querySelector(`.film-card__controls-item--favorite`).classList.toggle(`film-card__controls-item--active`);
 
-      this._callback.favourites();
+      this._callback.favourites(this._cardInfo);
     });
   }
 

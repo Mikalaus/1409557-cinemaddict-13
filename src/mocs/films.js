@@ -45,25 +45,6 @@ const DUMMY_TEXT = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nu
 
 const AUTHORS = [`Sherlock`, `Troll228`, `Tenderlybae`, `Hesus`, `Topa`];
 
-const POSTER_URL = [`images/posters/made-for-each-other.png`,
-  `images/posters/sagebrush-trail.jpg`,
-  `images/posters/popeye-meets-sinbad.png`,
-  `images/posters/santa-claus-conquers-the-martians.jpg`,
-  `images/posters/the-dance-of-life.jpg`,
-  `images/posters/the-great-flamarion.jpg`,
-  `images/posters/the-man-with-the-golden-arm.jpg`];
-
-const GENRE = [`horror`, `comedy`, `thriller`, `drama`, `detective`];
-
-const PRODUCERS = [`Christopher Nolan`, `Dmitry Bikov`, `Quentin Tarantino`, `M. Night Shyamalan`];
-const SCREENWRITERS = [`Aleksey Balabanov`, `Woody Alen`, ...PRODUCERS];
-
-const STARING = [`Leonardo Di Caprio`, `Tom Holland`, `Woody Harellson`, `Tom Hanks`, `Tom Hardy`, `Killian Murphy`];
-
-const COUNTRIES = [`USA`, `UK`, `Australia`, `Russia`, `Germany`, `France`];
-
-const AGE_LIMITS = [0, 6, 12, 16, 18];
-
 const createCommentMocInfo = (amount) => {
   let commentsList = [];
 
@@ -82,66 +63,4 @@ const createRandDateComment = () => {
   return dayjs(`${2020 - getRandomInteger()}-${getRandomInteger(1, 12)}-${getRandomInteger(1, 30)}-${getRandomInteger(0, 24)}:${getRandomInteger(0, 60)}`).format(`HH:mm DD/MM/YYYY`);
 };
 
-const createRandDatePopup = () => {
-  return dayjs(`${getRandomInteger(1970, 2020)}-${getRandomInteger(1, 12)}-${getRandomInteger(1, 31)}`).format(`YYYY-MM-DD`);
-};
-
-const generateFilmCard = () => {
-  const COMMENTS_AMOUNT = getRandomInteger(0, 40);
-  const FILM_TITLE = getRandomElementFromArray(FILM_TITLES);
-  return {
-    id: nanoid(10),
-
-    title: FILM_TITLE.ru,
-
-    posterURL: getRandomElementFromArray(POSTER_URL),
-
-    description: getRandomElementFromArray(DUMMY_TEXT),
-
-    rating: getRandomInteger(0, 100) / 10,
-
-    yearOfProduction: getRandomInteger(1970, 2020),
-
-    duration: getRandomInteger(0, 230),
-
-    genre: getRandomElementsFromArray(GENRE),
-
-    commentsNumber: getRandomInteger(0, 12),
-
-    isWatched: Boolean(getRandomInteger()),
-
-    isAddedToWatchlist: Boolean(getRandomInteger()),
-
-    isFavourite: Boolean(getRandomInteger()),
-
-    commentsAmount: COMMENTS_AMOUNT,
-
-    comments: createCommentMocInfo(COMMENTS_AMOUNT),
-
-    originalTitle: FILM_TITLE.en,
-
-    producer: getRandomElementFromArray(PRODUCERS),
-
-    screenwriter: getRandomElementsFromArray(SCREENWRITERS),
-
-    stars: getRandomElementsFromArray(STARING),
-
-    country: getRandomElementFromArray(COUNTRIES),
-
-    fullDescription: getRandomElementFromArray(DUMMY_TEXT),
-
-    ageLimit: getRandomElementFromArray(AGE_LIMITS),
-
-    date: createRandDatePopup()
-  };
-};
-
-const generateFilmCards = (limit) => {
-  let generateFilmList = [];
-  for (let i = 0; i < limit; i++) {
-    generateFilmList.push(generateFilmCard()); // генерация всех карточек в моках
-  }
-  return generateFilmList;
-};
-
-export {generateFilmCards, createCommentMocInfo};
+export {createCommentMocInfo};
