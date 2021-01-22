@@ -10,8 +10,7 @@ import {
 
 import {
   renderElement,
-  RenderPosition,
-  getRandomInteger
+  RenderPosition
 } from '../util';
 
 import MenuPresenter from './menu';
@@ -98,7 +97,7 @@ export default class BoardPresenter {
       renderElement(this._films, this._mostCommented.getElement(), RenderPosition.BEFOREEND);
     }
 
-    renderElement(this._footer, new MoviesStatsView(`${getRandomInteger(1, 999)} ${getRandomInteger(1, 1000)}`).getElement(), RenderPosition.BEFOREEND);
+    renderElement(this._footer, new MoviesStatsView(`${this._filmModel.getFilms().length}`).getElement(), RenderPosition.BEFOREEND);
 
     this._filmsList = this._main.querySelector(`.films-list`);
     this._extraFilmsList = this._main.querySelectorAll(`.films-list--extra`);
