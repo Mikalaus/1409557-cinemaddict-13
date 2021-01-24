@@ -148,7 +148,7 @@ export default class MenuPresenter {
    * @param {array} filmList
    */
   _setFilters(filters) {
-    for (let filter of filters) {
+    for (const filter of filters) {
       this._setFilterSortFunction(filter[0], filter[1]);
     }
   }

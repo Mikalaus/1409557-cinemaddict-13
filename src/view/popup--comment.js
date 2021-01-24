@@ -39,7 +39,7 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
       emotion: src.slice(15, -4)
     };
   } else {
-    for (let comment of commentsList) {
+    for (const comment of commentsList) {
       const {id, emotion, text, author, publicationDate} = comment;
       commentList += `
       <li class="film-details__comment" id="${id}">

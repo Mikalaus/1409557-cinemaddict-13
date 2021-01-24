@@ -47,7 +47,7 @@ const FiltersList = {
   },
 
   sortByTime: (arr, time) => {
-    let sortedArr = [];
+    const sortedArr = [];
     arr.forEach((item) => {
       if (item.date > time) {
         sortedArr.push(item);

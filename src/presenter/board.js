@@ -194,7 +194,7 @@ export default class BoardPresenter {
       evt.preventDefault();
       this._body.classList.add(`hide-overflow`);
 
-      for (let card of this._filmModel.getFilms().slice()) {
+      for (const card of this._filmModel.getFilms().slice()) {
         if (card.id === this._cardId) {
           this._popupComponent = new PopupView(
               activeFilmCard,

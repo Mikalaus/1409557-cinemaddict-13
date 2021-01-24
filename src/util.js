@@ -34,7 +34,7 @@ const getRandomElementsFromArray = (arr) => {
  * @return {number} rand
  */
 const getRandomInteger = (min = 0, max = 1) => {
-  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  const rand = min - 0.5 + Math.random() * (max - min + 1);
   return Math.round(rand);
 };
 
