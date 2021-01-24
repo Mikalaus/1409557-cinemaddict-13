@@ -5,7 +5,6 @@ import {API} from './const';
 import MoviesModel from './model/movies';
 import BoardPresenter from './presenter/board';
 
-
 const loading = new LoadingView();
 
 const main = document.querySelector(`.main`);
