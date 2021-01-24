@@ -158,7 +158,7 @@ export default class StatsView extends Smart {
   _updateInfo() {
     this._moviesAmount.textContent = this._data.moviesAmount;
     this._totalDuration.textContent = this._data.duration;
-    this._topGenre.textContent = this._data.genres;
+    this._topGenre.textContent = [...this._data.genres.keys()][0];
   }
 
   _renderStats() {

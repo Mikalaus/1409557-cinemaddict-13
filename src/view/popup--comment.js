@@ -24,7 +24,7 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
           <p class="film-details__comment-text">${he.encode(text)}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${dayjs(now).format(`HH:mm DD/MM/YYYY`)}</span>
+            <span class="film-details__comment-day">${dayjs(now).format(`DD/MM/YYYY HH:mm`)}</span>
             <button type="button" class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -50,7 +50,7 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
           <p class="film-details__comment-text">${text}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${dayjs(publicationDate).format(`HH:mm DD/MM/YYYY`)}</span>
+            <span class="film-details__comment-day">${dayjs(publicationDate).format(`DD/MM/YYYY HH:mm`)}</span>
             <button type="button" class="film-details__comment-delete">Delete</button>
           </p>
         </div>

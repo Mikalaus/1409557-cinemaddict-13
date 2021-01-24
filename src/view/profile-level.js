@@ -51,6 +51,8 @@ export default class ProfileLevelView extends Smart {
       this._rank = `fan`;
     } else if (this._moviesAmount > 20) {
       this._rank = `movie buff`;
+    } else {
+      this._rank = `novice`;
     }
 
     return this._rank;
