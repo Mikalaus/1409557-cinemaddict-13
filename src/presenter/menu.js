@@ -37,6 +37,7 @@ export default class MenuPresenter {
   init(filmsContainers) {
     renderElement(this._container, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     this._navFilters = document.querySelectorAll(`.main-navigation__item`);
+    this._sortFilters = document.querySelectorAll(`.sort__button`);
 
     const FiltersDictionary = {
       ALL: this._navFilters[0],
@@ -52,8 +53,6 @@ export default class MenuPresenter {
     this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, FiltersList.sortWatchlist]);
     this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, FiltersList.sortHistory]);
     this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, FiltersList.sortFavourites]);
-
-    this._sortFilters = document.querySelectorAll(`.sort__button`);
 
     this._localFilters.set(`default`, [FiltersDictionary.DEFAULT, Array.from]);
     this._localFilters.set(`date`, [FiltersDictionary.DATE, FiltersList.sortByDate]);

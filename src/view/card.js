@@ -1,7 +1,7 @@
+import {MAX_DESCRIPTION_LENGTH} from '../const';
 import AbstractView from './abstract';
 import {createElement, parseRuntimeToString} from '../util';
 import dayjs from '../../node_modules/dayjs';
-
 
 const createFilmCardTemplate = (film) => {
 
@@ -30,7 +30,7 @@ const createFilmCardTemplate = (film) => {
       <span class="film-card__genre">${genre.join(`, `)}</span>
     </p>
     <img src=${posterURL} alt="" class="film-card__poster">
-    <p class="film-card__description">${description.length > 140 ? description.substr(0, 139) + `...` : description}</p>
+    <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.substr(0, MAX_DESCRIPTION_LENGTH - 1) + `...` : description}</p>
     <a class="film-card__comments">${comments.length} comments</a>
     <div class="film-card__controls">
       <button class="film-card__controls-item ${isAddedToWatchlist ? `film-card__controls-item--active` : ``} button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>

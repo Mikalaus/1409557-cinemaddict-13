@@ -23,8 +23,8 @@ api.getMovies()
     loading.remove();
     board.init();
   })
-  .catch((error) => {
+  .catch((err) => {
     main.innerHTML = ``;
     renderElement(main, new ListEmptyView().getElement(), RenderPosition.BEFOREEND);
-    throw new Error(error);
+    throw err;
   });
