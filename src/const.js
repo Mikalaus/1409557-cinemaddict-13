@@ -60,12 +60,18 @@ const FiltersList = {
 const DEFAULT_RENDER_INDEX = 5;
 
 const ENTER_KEY = 13;
+const ESC_KEY = 27;
+const RIGHT_BUTTON = 0;
+const MAX_DESCRIPTION_LENGTH = 140;
 
 const TOP_RATED = `Top Rated`;
 const MOST_COMMENTED = `Most Commented`;
 
 const SORT_BUTTON_CLASS = `sort__button`;
 const NAV_BUTTON_CLASS = `main-navigation__item`;
+
+const FAN_RANK = 11;
+const MOVIE_BUFF_RANK = 21;
 
 const EmojiInfo = {
   angry: {
@@ -107,5 +113,10 @@ export {
   ENTER_KEY,
   FiltersList,
   EmojiInfo,
-  API
+  API,
+  ESC_KEY,
+  RIGHT_BUTTON,
+  MAX_DESCRIPTION_LENGTH,
+  FAN_RANK,
+  MOVIE_BUFF_RANK
 };

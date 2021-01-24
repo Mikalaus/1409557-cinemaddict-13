@@ -5,7 +5,9 @@ import {
   DEFAULT_RENDER_INDEX,
   PopupMode,
   FiltersList,
-  API
+  API,
+  ESC_KEY,
+  RIGHT_BUTTON
 } from '../const';
 
 import {
@@ -25,9 +27,6 @@ import MoviesStatsView from '../view/movies-stats';
 import FilmsView from '../view/films';
 
 import FiltersModel from '../model/filters';
-
-
-// реализовать датабиндинг между TopRated/MostCommented с основным filmlist-ом
 
 export default class BoardPresenter {
   constructor(filmModel) {
@@ -67,7 +66,6 @@ export default class BoardPresenter {
 
     this._popupMode = PopupMode.CLOSED;
 
-    // переменная для сохранения в нее функции предыдущей фильтрации для локальных фильтров
     this._previousFilter = Array.from;
 
     this._filmListClickHandler = this._filmListClickHandler.bind(this);
@@ -169,7 +167,7 @@ export default class BoardPresenter {
    * @param {event} evt
    */
   _closePopup(evt) {
-    if (evt.button === 0 || evt.keyCode === 27) { // заменить на значения
+    if (evt.button === RIGHT_BUTTON || evt.keyCode === ESC_KEY) {
       const popup = this._footer.querySelector(`.film-details`);
       this._body.classList.remove(`hide-overflow`);
       document.removeEventListener(`keyup`, this._popupComponent._commentDispatchHandler);

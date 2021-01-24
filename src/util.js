@@ -34,7 +34,6 @@ const getRandomElementsFromArray = (arr) => {
  * @return {number} rand
  */
 const getRandomInteger = (min = 0, max = 1) => {
-  // получить случайное число от (min-0.5) до (max+0.5)
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   return Math.round(rand);
 };
@@ -72,7 +71,7 @@ const parseRuntimeToString = (duration) => {
   const minutes = duration % 60;
   const hours = (duration - minutes) / 60;
 
-  if (hours > 0) { // тернарник
+  if (hours > 0) {
     return `${hours}h ${minutes}m`;
   } else {
     return `${minutes}m`;

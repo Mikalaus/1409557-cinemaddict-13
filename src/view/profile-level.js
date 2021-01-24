@@ -1,3 +1,4 @@
+import {MOVIE_BUFF_RANK, FAN_RANK} from '../const';
 import Smart from './smart';
 import {createElement} from '../util';
 
@@ -47,9 +48,9 @@ export default class ProfileLevelView extends Smart {
   }
 
   getRank() {
-    if (this._moviesAmount > 11 && this._moviesAmount < 21) {
+    if (this._moviesAmount > FAN_RANK && this._moviesAmount < MOVIE_BUFF_RANK) {
       this._rank = `fan`;
-    } else if (this._moviesAmount > 20) {
+    } else if (this._moviesAmount >= MOVIE_BUFF_RANK) {
       this._rank = `movie buff`;
     } else {
       this._rank = `novice`;

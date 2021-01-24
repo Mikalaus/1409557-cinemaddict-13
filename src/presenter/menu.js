@@ -38,6 +38,16 @@ export default class MenuPresenter {
     renderElement(this._container, this._menu.getElement(), RenderPosition.AFTERBEGIN);
     this._navFilters = document.querySelectorAll(`.main-navigation__item`);
 
+    const FiltersDictionary = {
+      ALL: this._navFilters[0],
+      WATCHLIST: this._navFilters[1],
+      HISTORY: this._navFilters[2],
+      FAVOURITES: this._navFilters[3],
+      DEFAULT: this._sortFilters[0],
+      DATE: this._sortFilters[1],
+      RATING: this._sortFilters[2]
+    };
+
     this._globalFilters.set(`all movies`, [this._navFilters[0], Array.from]); // словарь для индексов
     this._globalFilters.set(`watchlist`, [this._navFilters[1], FiltersList.sortWatchlist]);
     this._globalFilters.set(`history`, [this._navFilters[2], FiltersList.sortHistory]);
@@ -128,7 +138,6 @@ export default class MenuPresenter {
     });
   }
 
-  // функция для сброса сортировки при глобальной фильтрации
   _resetDefaultSorting() {
     document.querySelector(`.${SORT_BUTTON_CLASS}--active`).classList.remove(`${SORT_BUTTON_CLASS}--active`);
     document.querySelector(`.${SORT_BUTTON_CLASS}`).classList.add(`${SORT_BUTTON_CLASS}--active`);
