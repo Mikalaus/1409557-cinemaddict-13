@@ -48,16 +48,16 @@ export default class MenuPresenter {
       RATING: this._sortFilters[2]
     };
 
-    this._globalFilters.set(`all movies`, [this._navFilters[0], Array.from]); // словарь для индексов
-    this._globalFilters.set(`watchlist`, [this._navFilters[1], FiltersList.sortWatchlist]);
-    this._globalFilters.set(`history`, [this._navFilters[2], FiltersList.sortHistory]);
-    this._globalFilters.set(`favourites`, [this._navFilters[3], FiltersList.sortFavourites]);
+    this._globalFilters.set(`all movies`, [FiltersDictionary.ALL, Array.from]);
+    this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, FiltersList.sortWatchlist]);
+    this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, FiltersList.sortHistory]);
+    this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, FiltersList.sortFavourites]);
 
     this._sortFilters = document.querySelectorAll(`.sort__button`);
 
-    this._localFilters.set(`default`, [this._sortFilters[0], Array.from]);
-    this._localFilters.set(`date`, [this._sortFilters[1], FiltersList.sortByDate]);
-    this._localFilters.set(`rating`, [this._sortFilters[2], FiltersList.sortByRating]);
+    this._localFilters.set(`default`, [FiltersDictionary.DEFAULT, Array.from]);
+    this._localFilters.set(`date`, [FiltersDictionary.DATE, FiltersList.sortByDate]);
+    this._localFilters.set(`rating`, [FiltersDictionary.RATING, FiltersList.sortByRating]);
 
     /**
      * добавление функционала фильтрации
