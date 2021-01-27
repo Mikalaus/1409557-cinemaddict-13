@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import Abstract from './abstract';
 
 
 const createMoviesStatsTemplate = (moviesAmount) => {
@@ -9,7 +9,7 @@ const createMoviesStatsTemplate = (moviesAmount) => {
   `;
 };
 
-export default class MoviesStatsView extends AbstractView {
+export default class MoviesStats extends Abstract {
   constructor(moviesAmount) {
     super();
     this._moviesAmount = moviesAmount;

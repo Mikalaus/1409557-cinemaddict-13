@@ -1,6 +1,6 @@
 import CommentsModel from '../model/comments';
-import SmartView from './smart';
-import CommentView from './popup--comment';
+import Smart from './smart';
+import Comment from './popup-comment';
 import {createFilmPopupGenres} from './popup-genres';
 import dayjs from '../../node_modules/dayjs';
 import {API} from '../const';
@@ -161,7 +161,7 @@ const createFilmPopupTemplate = (filmInfo) => {
   `;
 };
 
-export default class PopupView extends SmartView {
+export default class Popup extends Smart {
   constructor(filmCard, cardInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
 
@@ -207,7 +207,7 @@ export default class PopupView extends SmartView {
     this._api.getComments(this._cardInfo.id)
       .then((comments) => {
         this._commentsModel.setComments(comments);
-        renderElement(this._commentsContainer, new CommentView(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
+        renderElement(this._commentsContainer, new Comment(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
       });
 
     this._element.querySelector(`.film-details__inner`).addEventListener(`keydown`, (evt) => {
@@ -239,7 +239,7 @@ export default class PopupView extends SmartView {
   _commentDispatchHandler(evt) {
     if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
 
-      const userComment = new CommentView(this._commentsCountContainer, this._form, true);
+      const userComment = new Comment(this._commentsCountContainer, this._form, true);
       this._commentsList = this._commentsContainer;
 
       this._api.updateComment(userComment.getInfo(), this._cardInfo)
@@ -261,7 +261,7 @@ export default class PopupView extends SmartView {
               this._commentsContainer.innerHTML = ``;
               this._commentsCountContainer.textContent = comments.length;
               this._commentsModel.setComments(comments);
-              renderElement(this._commentsContainer, new CommentView(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
+              renderElement(this._commentsContainer, new Comment(this._commentsCountContainer, comments).getElement(), RenderPosition.BEFOREEND);
             });
         })
         .catch((error) => {

@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import Abstract from './abstract';
 
 const createFilmListExtraTemplate = (title) => {
   return `
@@ -9,7 +9,7 @@ const createFilmListExtraTemplate = (title) => {
   `;
 };
 
-export default class ListExtraView extends AbstractView {
+export default class ListExtra extends Abstract {
   constructor(title) {
     super();
     this._title = title;

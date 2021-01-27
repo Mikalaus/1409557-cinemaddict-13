@@ -4,7 +4,7 @@ import {
   MOST_COMMENTED,
   DEFAULT_RENDER_INDEX,
   PopupMode,
-  FiltersList,
+  FILTERS_LIST,
   API,
   ESC_KEY,
   RIGHT_BUTTON
@@ -15,16 +15,16 @@ import {
   RenderPosition
 } from '../util';
 
-import MenuPresenter from './menu';
+import MenuPresenter from './menu-presenter';
 
-import ListExtraView from '../view/list--extra';
-import ProfileLevelView from '../view/profile-level';
-import FilmCardView from '../view/card';
-import ListView from '../view/list';
-import PopupView from '../view/popup';
-import ShowMoreButtonView from '../view/show-more-button';
-import MoviesStatsView from '../view/movies-stats';
-import FilmsView from '../view/films';
+import ListExtra from '../view/list-extra';
+import ProfileLevel from '../view/profile-level';
+import FilmCard from '../view/card';
+import List from '../view/list';
+import Popup from '../view/popup';
+import ShowMoreButton from '../view/show-more-button';
+import MoviesStats from '../view/movies-stats';
+import Films from '../view/films';
 
 import FiltersModel from '../model/filters';
 
@@ -33,7 +33,7 @@ export default class BoardPresenter {
 
     this._filmModel = filmModel;
 
-    this._profileLevel = new ProfileLevelView(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length);
+    this._profileLevel = new ProfileLevel(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length);
 
     this._menuPresenter = new MenuPresenter(this._filmModel, this._renderFilteredFilmCards, this._profileLevel);
 
@@ -51,9 +51,9 @@ export default class BoardPresenter {
     this._main = document.querySelector(`.main`);
     this._footer = document.querySelector(`.footer`);
 
-    this._filmList = new ListView(this._filmModel.getFilms().slice());
-    this._topRated = new ListExtraView(TOP_RATED);
-    this._mostCommented = new ListExtraView(MOST_COMMENTED);
+    this._filmList = new List(this._filmModel.getFilms().slice());
+    this._topRated = new ListExtra(TOP_RATED);
+    this._mostCommented = new ListExtra(MOST_COMMENTED);
     this._menu = this._menuPresenter.getMenu();
 
     this._films = null;
@@ -69,7 +69,7 @@ export default class BoardPresenter {
     this._previousFilter = Array.from;
 
     this._filmListClickHandler = this._filmListClickHandler.bind(this);
-    this._closePopup = this._closePopup.bind(this);
+    this._closePopupHandler = this._closePopupHandler.bind(this);
     this._renderFilteredFilmCards = this._renderFilteredFilmCards.bind(this);
 
     this._updateWatchlist = this._updateWatchlist.bind(this);
@@ -83,9 +83,9 @@ export default class BoardPresenter {
     /**
      * рендер основной разметки
      */
-    renderElement(this._main, new FilmsView().getElement(), RenderPosition.BEFOREEND);
+    renderElement(this._main, new Films().getElement(), RenderPosition.BEFOREEND);
     this._films = this._main.querySelector(`.films`);
-    renderElement(this._header, this._profileLevel.getElement(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
+    renderElement(this._header, this._profileLevel.getElement(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
     renderElement(this._films, this._filmList.getElement(), RenderPosition.AFTERBEGIN);
 
     this._filmsListContainers = this._main.querySelectorAll(`.films-list`);
@@ -95,7 +95,7 @@ export default class BoardPresenter {
       renderElement(this._films, this._mostCommented.getElement(), RenderPosition.BEFOREEND);
     }
 
-    renderElement(this._footer, new MoviesStatsView(`${this._filmModel.getFilms().length}`).getElement(), RenderPosition.BEFOREEND);
+    renderElement(this._footer, new MoviesStats(`${this._filmModel.getFilms().length}`).getElement(), RenderPosition.BEFOREEND);
 
     this._filmsList = this._main.querySelector(`.films-list`);
     this._extraFilmsList = this._main.querySelectorAll(`.films-list--extra`);
@@ -109,8 +109,8 @@ export default class BoardPresenter {
 
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
 
-    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, FiltersList.sortByComments(this._filmModel.getFilms().slice()));
-    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, FiltersList.sortByRating(this._filmModel.getFilms().slice()));
+    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, FILTERS_LIST.sortByComments(this._filmModel.getFilms().slice()));
+    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, FILTERS_LIST.sortByRating(this._filmModel.getFilms().slice()));
     this._topRated.setContainerClickHandler(this._filmListClickHandler);
     this._mostCommented.setContainerClickHandler(this._filmListClickHandler);
 
@@ -126,7 +126,7 @@ export default class BoardPresenter {
    */
   _renderFilmList(filmList, limit, cardsList, indexElement = 0) {
     for (let i = 0; i < limit && indexElement < cardsList.length; i++) {
-      renderElement(filmList.querySelector(`.films-list__container`), new FilmCardView(
+      renderElement(filmList.querySelector(`.films-list__container`), new FilmCard(
           cardsList[indexElement],
           this._menu,
           this._updateWatchlist,
@@ -166,13 +166,13 @@ export default class BoardPresenter {
    * callback для удаления попапа
    * @param {event} evt
    */
-  _closePopup(evt) {
+  _closePopupHandler(evt) {
     if (evt.button === RIGHT_BUTTON || evt.keyCode === ESC_KEY) {
       const popup = this._footer.querySelector(`.film-details`);
       this._body.classList.remove(`hide-overflow`);
       document.removeEventListener(`keyup`, this._popupComponent._commentDispatchHandler);
       popup.remove();
-      document.removeEventListener(`keydown`, this._closePopup);
+      document.removeEventListener(`keydown`, this._closePopupHandler);
       this._popupMode = PopupMode.CLOSED;
     }
   }
@@ -196,7 +196,7 @@ export default class BoardPresenter {
 
       for (const card of this._filmModel.getFilms().slice()) {
         if (card.id === this._cardId) {
-          this._popupComponent = new PopupView(
+          this._popupComponent = new Popup(
               activeFilmCard,
               card,
               this._menu,
@@ -204,8 +204,8 @@ export default class BoardPresenter {
               this._updateHistoryList,
               this._updateFavourites);
           renderElement(this._footer, this._popupComponent.getElement(), RenderPosition.BEFOREEND);
-          this._popupComponent.setCloseButtonClickHandler(this._closePopup);
-          document.addEventListener(`keydown`, this._closePopup);
+          this._popupComponent.setCloseButtonClickHandler(this._closePopupHandler);
+          document.addEventListener(`keydown`, this._closePopupHandler);
           break;
         }
       }
@@ -220,7 +220,7 @@ export default class BoardPresenter {
 
     this._deleteShowMoreButton();
 
-    const showMore = new ShowMoreButtonView();
+    const showMore = new ShowMoreButton();
 
     renderElement(this._filmsList, showMore.getElement(), RenderPosition.BEFOREEND);
 
@@ -250,7 +250,7 @@ export default class BoardPresenter {
     this._filmsList.querySelector(`.films-list__container`).innerHTML = ``;
     for (let i = 0; i < FilmListLimit.DEFAULT && i < this._filteredFilmCards.length; i++) {
       renderElement(this._filmsList.querySelector(`.films-list__container`),
-          new FilmCardView(
+          new FilmCard(
               this._filteredFilmCards[i],
               this._menu,
               this._updateWatchlist,
@@ -261,29 +261,29 @@ export default class BoardPresenter {
   }
 
   _updateWatchlist(movieInfo) {
-    this._menu._addWatchlistButton.innerHTML = FiltersList.sortWatchlist(this._filmModel.getFilms().slice()).length;
+    this._menu._addWatchlistButton.innerHTML = FILTERS_LIST.sortWatchlist(this._filmModel.getFilms().slice()).length;
     if (this._menu._addWatchlistButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FiltersList.sortWatchlist, this._filteredFilmCards);
+      this._renderFilteredFilmCards(FILTERS_LIST.sortWatchlist, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }
 
   _updateHistoryList(movieInfo) {
-    this._menu._addHistoryListButton.innerHTML = FiltersList.sortHistory(this._filmModel.getFilms().slice()).length;
-    this._profileLevel.setMoviesAmount(FiltersList.sortHistory(this._filmModel.getFilms().slice()).length);
+    this._menu._addHistoryListButton.innerHTML = FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length;
+    this._profileLevel.setMoviesAmount(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length);
     this._profileLevel.updateElement();
     this._menuPresenter._stats.updateData({rank: this._profileLevel.getRank()}, true);
     renderElement(this._header, this._profileLevel.getElement(), RenderPosition.BEFOREEND);
     if (this._menu._addHistoryListButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FiltersList.sortHistory, this._filteredFilmCards);
+      this._renderFilteredFilmCards(FILTERS_LIST.sortHistory, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }
 
   _updateFavourites(movieInfo) {
-    this._menu._addFavouriteListButton.innerHTML = FiltersList.sortFavourites(this._filmModel.getFilms().slice()).length;
+    this._menu._addFavouriteListButton.innerHTML = FILTERS_LIST.sortFavourites(this._filmModel.getFilms().slice()).length;
     if (this._menu._addFavouriteListButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FiltersList.sortFavourites, this._filteredFilmCards);
+      this._renderFilteredFilmCards(FILTERS_LIST.sortFavourites, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }

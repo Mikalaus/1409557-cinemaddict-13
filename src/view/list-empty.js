@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import Abstract from './abstract';
 
 const createFilmListEmptyTemplate = () => {
   return `
@@ -22,7 +22,7 @@ const createFilmListEmptyTemplate = () => {
   `;
 };
 
-export default class ListEmptyView extends AbstractView {
+export default class ListEmpty extends Abstract {
 
   getTemplate() {
     return createFilmListEmptyTemplate();

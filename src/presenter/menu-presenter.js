@@ -1,4 +1,4 @@
-import MenuView from '../view/menu';
+import Menu from '../view/menu';
 import FiltersModel from '../model/filters';
 
 import {
@@ -9,21 +9,21 @@ import {
 import {
   SORT_BUTTON_CLASS,
   NAV_BUTTON_CLASS,
-  FiltersList
+  FILTERS_LIST
 } from '../const';
 
-import StatsView from '../view/stats';
+import Stats from '../view/stats';
 
 export default class MenuPresenter {
   constructor(MoviesModel, updateFilms, userStats) {
     this._filmModel = MoviesModel;
-    this._userStatsView = userStats;
-    this._stats = new StatsView(this._userStatsView.getRank(), this._filmModel);
+    this._userStats = userStats;
+    this._stats = new Stats(this._userStats.getRank(), this._filmModel);
     this._filtersModel = new FiltersModel();
     this._globalFilters = new Map();
     this._localFilters = new Map();
     this._statsClickHandler = this._statsClickHandler.bind(this);
-    this._menu = new MenuView(MoviesModel.getFilms(), this._stats, this._statsClickHandler);
+    this._menu = new Menu(MoviesModel.getFilms(), this._stats, this._statsClickHandler);
     this._container = document.querySelector(`.main`);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._filtersModel.addObserver(this._handleModelEvent);
@@ -50,13 +50,13 @@ export default class MenuPresenter {
     };
 
     this._globalFilters.set(`all movies`, [FiltersDictionary.ALL, Array.from]);
-    this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, FiltersList.sortWatchlist]);
-    this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, FiltersList.sortHistory]);
-    this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, FiltersList.sortFavourites]);
+    this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, FILTERS_LIST.sortWatchlist]);
+    this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, FILTERS_LIST.sortHistory]);
+    this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, FILTERS_LIST.sortFavourites]);
 
     this._localFilters.set(`default`, [FiltersDictionary.DEFAULT, Array.from]);
-    this._localFilters.set(`date`, [FiltersDictionary.DATE, FiltersList.sortByDate]);
-    this._localFilters.set(`rating`, [FiltersDictionary.RATING, FiltersList.sortByRating]);
+    this._localFilters.set(`date`, [FiltersDictionary.DATE, FILTERS_LIST.sortByDate]);
+    this._localFilters.set(`rating`, [FiltersDictionary.RATING, FILTERS_LIST.sortByRating]);
 
     /**
      * добавление функционала фильтрации

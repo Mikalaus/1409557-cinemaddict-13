@@ -1,4 +1,4 @@
-import AbstractView from './abstract';
+import Abstract from './abstract';
 
 const createShowMoreButtonTemplate = () => {
   return `
@@ -6,7 +6,7 @@ const createShowMoreButtonTemplate = () => {
   `;
 };
 
-export default class ShowMoreButtonView extends AbstractView {
+export default class ShowMoreButton extends Abstract {
 
   constructor() {
     super();

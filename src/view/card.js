@@ -1,5 +1,5 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const';
-import AbstractView from './abstract';
+import Abstract from './abstract';
 import {createElement, parseRuntimeToString} from '../util';
 import dayjs from '../../node_modules/dayjs';
 
@@ -41,7 +41,7 @@ const createFilmCardTemplate = (film) => {
   `;
 };
 
-export default class FilmCardView extends AbstractView {
+export default class FilmCard extends Abstract {
   constructor(filmInfo, menu, updateWatchlist, updateHistory, updateFavourites) {
     super();
     this._menu = menu;

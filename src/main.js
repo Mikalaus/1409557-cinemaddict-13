@@ -1,11 +1,11 @@
-import ListEmptyView from './view/list--empty';
+import ListEmpty from './view/list-empty';
 import {renderElement, RenderPosition} from './util';
-import LoadingView from './view/loading';
+import Loading from './view/loading';
 import {API} from './const';
 import MoviesModel from './model/movies';
-import BoardPresenter from './presenter/board';
+import BoardPresenter from './presenter/board-presenter';
 
-const loading = new LoadingView();
+const loading = new Loading();
 
 const main = document.querySelector(`.main`);
 
@@ -24,6 +24,6 @@ api.getMovies()
   })
   .catch((err) => {
     main.innerHTML = ``;
-    renderElement(main, new ListEmptyView().getElement(), RenderPosition.BEFOREEND);
+    renderElement(main, new ListEmpty().getElement(), RenderPosition.BEFOREEND);
     throw err;
   });

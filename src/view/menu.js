@@ -1,11 +1,11 @@
-import AbstractView from './abstract';
+import Abstract from './abstract';
 import {createElement} from '../util';
-import {FiltersList} from '../const';
+import {FILTERS_LIST} from '../const';
 
 const createMenuTemplate = (filmList) => {
-  const watchlist = FiltersList.sortWatchlist([...filmList]).length;
-  const history = FiltersList.sortHistory([...filmList]).length;
-  const favourites = FiltersList.sortFavourites([...filmList]).length;
+  const watchlist = FILTERS_LIST.sortWatchlist([...filmList]).length;
+  const history = FILTERS_LIST.sortHistory([...filmList]).length;
+  const favourites = FILTERS_LIST.sortFavourites([...filmList]).length;
 
   return `
   <div class="menu-container">
@@ -28,7 +28,7 @@ const createMenuTemplate = (filmList) => {
   `;
 };
 
-export default class MenuView extends AbstractView {
+export default class Menu extends Abstract {
   constructor(filmList, stats, statsClickCallback) {
     super();
     this._stats = stats;

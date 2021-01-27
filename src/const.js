@@ -10,45 +10,45 @@ const FilmListLimit = {
   EXTRA: 2
 };
 
-const FiltersList = {
-  sortByDate: (arr) => {
-    arr.sort((a, b) => {
+const FILTERS_LIST = {
+  sortByDate: (filmsList) => {
+    filmsList.sort((a, b) => {
       return b.yearOfProduction - a.yearOfProduction;
     });
 
-    return arr;
+    return filmsList;
   },
-  sortByRating: (arr) => {
-    arr.sort((a, b) => {
+  sortByRating: (filmsList) => {
+    filmsList.sort((a, b) => {
       return b.rating - a.rating;
     });
 
-    return arr;
+    return filmsList;
   },
 
-  sortByComments: (arr) => {
-    arr.sort((a, b) => {
+  sortByComments: (filmsList) => {
+    filmsList.sort((a, b) => {
       return b.comments.length - a.comments.length;
     });
 
-    return arr;
+    return filmsList;
   },
 
-  sortWatchlist: (arr) => {
-    return [...arr].filter((film) => film.isAddedToWatchlist);
+  sortWatchlist: (filmsList) => {
+    return [...filmsList].filter((film) => film.isAddedToWatchlist);
   },
 
-  sortHistory: (arr) => {
-    return [...arr].filter((film) => film.isWatched);
+  sortHistory: (filmsList) => {
+    return [...filmsList].filter((film) => film.isWatched);
   },
 
-  sortFavourites: (arr) => {
-    return [...arr].filter((film) => film.isFavourite);
+  sortFavourites: (filmsList) => {
+    return [...filmsList].filter((film) => film.isFavourite);
   },
 
-  sortByTime: (arr, time) => {
+  sortByTime: (filmsList, time) => {
     const sortedArr = [];
-    arr.forEach((item) => {
+    filmsList.forEach((item) => {
       if (item.date > time) {
         sortedArr.push(item);
       }
@@ -111,7 +111,7 @@ export {
   DEFAULT_RENDER_INDEX,
   PopupMode,
   ENTER_KEY,
-  FiltersList,
+  FILTERS_LIST,
   EmojiInfo,
   API,
   ESC_KEY,

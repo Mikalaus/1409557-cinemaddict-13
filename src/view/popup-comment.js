@@ -3,7 +3,7 @@ import {EmojiInfo} from '../const';
 import {createElement, createCommentMocInfo} from '../util';
 import Abstract from './abstract';
 import he from "he";
-import dayjs from '../../node_modules/dayjs';
+import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 
 
@@ -66,7 +66,7 @@ const createFilmPopupComment = (commentsList, addedByUser, onlyInfo) => {
   }
 };
 
-export default class CommentView extends Abstract {
+export default class Comment extends Abstract {
 
   constructor(commentsCountContainer, commentsList, addedByUser = false) {
     super();

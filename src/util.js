@@ -1,7 +1,7 @@
 const AUTHORS = [`Sherlock`, `Troll228`, `Tenderlybae`, `Hesus`, `Topa`];
 
-const getRandomElementFromArray = (arr) => {
-  return arr[getRandomInteger(0, arr.length - 1)];
+const getRandomElementFromArray = (filmsList) => {
+  return filmsList[getRandomInteger(0, filmsList.length - 1)];
 };
 
 const createCommentMocInfo = () => {
@@ -16,15 +16,6 @@ const RenderPosition = {
   BEFOREEND: `beforeend`,
   AFTERBEGIN: `afterbegin`,
   AFTEREND: `afterend`
-};
-
-const getRandomElementsFromArray = (arr) => {
-  const randWords = new Set();
-
-  while (randWords.size <= getRandomInteger(0, arr.length - 1)) {
-    randWords.add(arr[getRandomInteger(0, arr.length - 1)]);
-  }
-  return Array.from(randWords);
 };
 
 /**
@@ -73,9 +64,9 @@ const parseRuntimeToString = (duration) => {
 
   if (hours > 0) {
     return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
   }
+
+  return `${minutes}m`;
 };
 
 const capitalizeWord = (str) => {
@@ -85,7 +76,6 @@ const capitalizeWord = (str) => {
 
 export {
   getRandomInteger,
-  getRandomElementsFromArray,
   renderTemplate,
   renderElement,
   createElement,

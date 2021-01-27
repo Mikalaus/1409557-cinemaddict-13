@@ -23,7 +23,7 @@ const createProfileLevelTemplate = (movies, rank) => {
   return template;
 };
 
-export default class ProfileLevelView extends Smart {
+export default class ProfileLevel extends Smart {
 
   constructor(moviesAmount) {
     super();
