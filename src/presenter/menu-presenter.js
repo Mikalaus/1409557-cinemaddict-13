@@ -9,7 +9,7 @@ import {
 import {
   SORT_BUTTON_CLASS,
   NAV_BUTTON_CLASS,
-  FILTERS_LIST
+  filtersList
 } from '../const';
 
 import Stats from '../view/stats';
@@ -50,13 +50,13 @@ export default class MenuPresenter {
     };
 
     this._globalFilters.set(`all movies`, [FiltersDictionary.ALL, Array.from]);
-    this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, FILTERS_LIST.sortWatchlist]);
-    this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, FILTERS_LIST.sortHistory]);
-    this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, FILTERS_LIST.sortFavourites]);
+    this._globalFilters.set(`watchlist`, [FiltersDictionary.WATCHLIST, filtersList.sortWatchlist]);
+    this._globalFilters.set(`history`, [FiltersDictionary.HISTORY, filtersList.sortHistory]);
+    this._globalFilters.set(`favourites`, [FiltersDictionary.FAVOURITES, filtersList.sortFavourites]);
 
     this._localFilters.set(`default`, [FiltersDictionary.DEFAULT, Array.from]);
-    this._localFilters.set(`date`, [FiltersDictionary.DATE, FILTERS_LIST.sortByDate]);
-    this._localFilters.set(`rating`, [FiltersDictionary.RATING, FILTERS_LIST.sortByRating]);
+    this._localFilters.set(`date`, [FiltersDictionary.DATE, filtersList.sortByDate]);
+    this._localFilters.set(`rating`, [FiltersDictionary.RATING, filtersList.sortByRating]);
 
     /**
      * добавление функционала фильтрации

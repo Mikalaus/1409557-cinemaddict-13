@@ -1,5 +1,5 @@
 import {parseRuntimeToString, capitalizeWord} from '../util';
-import {FILTERS_LIST} from '../const';
+import {filtersList} from '../const';
 import Smart from './smart';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -171,22 +171,22 @@ export default class Stats extends Smart {
   _setHandlers() {
     const now = new Date();
     this._element.querySelector(`#statistic-today`).addEventListener(`change`, () => {
-      this._filmsList = FILTERS_LIST.sortByTime(this._filmModel.getFilms(), new Date(now - 24 * 3600 * 1000));
+      this._filmsList = filtersList.sortByTime(this._filmModel.getFilms(), new Date(now - 24 * 3600 * 1000));
       this._renderStats();
     });
 
     this._element.querySelector(`#statistic-week`).addEventListener(`change`, () => {
-      this._filmsList = FILTERS_LIST.sortByTime(this._filmModel.getFilms(), new Date(now - 7 * 24 * 3600 * 1000));
+      this._filmsList = filtersList.sortByTime(this._filmModel.getFilms(), new Date(now - 7 * 24 * 3600 * 1000));
       this._renderStats();
     });
 
     this._element.querySelector(`#statistic-month`).addEventListener(`change`, () => {
-      this._filmsList = FILTERS_LIST.sortByTime(this._filmModel.getFilms(), new Date(now - 30 * 24 * 3600 * 1000));
+      this._filmsList = filtersList.sortByTime(this._filmModel.getFilms(), new Date(now - 30 * 24 * 3600 * 1000));
       this._renderStats();
     });
 
     this._element.querySelector(`#statistic-year`).addEventListener(`change`, () => {
-      this._filmsList = FILTERS_LIST.sortByTime(this._filmModel.getFilms(), new Date(now - 365 * 24 * 3600 * 1000));
+      this._filmsList = filtersList.sortByTime(this._filmModel.getFilms(), new Date(now - 365 * 24 * 3600 * 1000));
       this._renderStats();
     });
 
@@ -206,7 +206,7 @@ export default class Stats extends Smart {
 
   _getTotalDuration() {
     let time = 0;
-    FILTERS_LIST.sortHistory(this._filmsList).forEach((film) => {
+    filtersList.sortHistory(this._filmsList).forEach((film) => {
       time += film.duration;
     });
 
@@ -215,7 +215,7 @@ export default class Stats extends Smart {
 
   _getGenres() {
     this._genres = [];
-    FILTERS_LIST.sortHistory(this._filmsList).forEach((film) => {
+    filtersList.sortHistory(this._filmsList).forEach((film) => {
       this._genres.push(...film.genre);
     });
 
@@ -239,7 +239,7 @@ export default class Stats extends Smart {
   }
 
   _getMoviesAmount() {
-    return FILTERS_LIST.sortHistory(this._filmsList).length;
+    return filtersList.sortHistory(this._filmsList).length;
   }
 
   restoreHandlers() {

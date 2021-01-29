@@ -10,7 +10,7 @@ const FilmListLimit = {
   EXTRA: 2
 };
 
-const FILTERS_LIST = {
+const filtersList = {
   sortByDate: (filmsList) => {
     filmsList.sort((a, b) => {
       return b.yearOfProduction - a.yearOfProduction;
@@ -111,7 +111,7 @@ export {
   DEFAULT_RENDER_INDEX,
   PopupMode,
   ENTER_KEY,
-  FILTERS_LIST,
+  filtersList,
   EmojiInfo,
   API,
   ESC_KEY,

@@ -1,11 +1,11 @@
 import Abstract from './abstract';
 import {createElement} from '../util';
-import {FILTERS_LIST} from '../const';
+import {filtersList} from '../const';
 
 const createMenuTemplate = (filmList) => {
-  const watchlist = FILTERS_LIST.sortWatchlist([...filmList]).length;
-  const history = FILTERS_LIST.sortHistory([...filmList]).length;
-  const favourites = FILTERS_LIST.sortFavourites([...filmList]).length;
+  const watchlist = filtersList.sortWatchlist([...filmList]).length;
+  const history = filtersList.sortHistory([...filmList]).length;
+  const favourites = filtersList.sortFavourites([...filmList]).length;
 
   return `
   <div class="menu-container">

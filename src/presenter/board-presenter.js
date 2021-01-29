@@ -4,7 +4,7 @@ import {
   MOST_COMMENTED,
   DEFAULT_RENDER_INDEX,
   PopupMode,
-  FILTERS_LIST,
+  filtersList,
   API,
   ESC_KEY,
   RIGHT_BUTTON
@@ -33,7 +33,7 @@ export default class BoardPresenter {
 
     this._filmModel = filmModel;
 
-    this._profileLevel = new ProfileLevel(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length);
+    this._profileLevel = new ProfileLevel(filtersList.sortHistory(this._filmModel.getFilms().slice()).length);
 
     this._menuPresenter = new MenuPresenter(this._filmModel, this._renderFilteredFilmCards, this._profileLevel);
 
@@ -85,7 +85,7 @@ export default class BoardPresenter {
      */
     renderElement(this._main, new Films().getElement(), RenderPosition.BEFOREEND);
     this._films = this._main.querySelector(`.films`);
-    renderElement(this._header, this._profileLevel.getElement(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
+    renderElement(this._header, this._profileLevel.getElement(filtersList.sortHistory(this._filmModel.getFilms().slice()).length), RenderPosition.BEFOREEND);
     renderElement(this._films, this._filmList.getElement(), RenderPosition.AFTERBEGIN);
 
     this._filmsListContainers = this._main.querySelectorAll(`.films-list`);
@@ -109,8 +109,8 @@ export default class BoardPresenter {
 
     this._checkNeedRenderShowMore(this._filteredFilmCards.length);
 
-    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, FILTERS_LIST.sortByComments(this._filmModel.getFilms().slice()));
-    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, FILTERS_LIST.sortByRating(this._filmModel.getFilms().slice()));
+    this._renderFilmList(this._extraFilmsList[1], FilmListLimit.EXTRA, filtersList.sortByComments(this._filmModel.getFilms().slice()));
+    this._renderFilmList(this._extraFilmsList[0], FilmListLimit.EXTRA, filtersList.sortByRating(this._filmModel.getFilms().slice()));
     this._topRated.setContainerClickHandler(this._filmListClickHandler);
     this._mostCommented.setContainerClickHandler(this._filmListClickHandler);
 
@@ -261,29 +261,29 @@ export default class BoardPresenter {
   }
 
   _updateWatchlist(movieInfo) {
-    this._menu._addWatchlistButton.innerHTML = FILTERS_LIST.sortWatchlist(this._filmModel.getFilms().slice()).length;
+    this._menu._addWatchlistButton.innerHTML = filtersList.sortWatchlist(this._filmModel.getFilms().slice()).length;
     if (this._menu._addWatchlistButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FILTERS_LIST.sortWatchlist, this._filteredFilmCards);
+      this._renderFilteredFilmCards(filtersList.sortWatchlist, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }
 
   _updateHistoryList(movieInfo) {
-    this._menu._addHistoryListButton.innerHTML = FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length;
-    this._profileLevel.setMoviesAmount(FILTERS_LIST.sortHistory(this._filmModel.getFilms().slice()).length);
+    this._menu._addHistoryListButton.innerHTML = filtersList.sortHistory(this._filmModel.getFilms().slice()).length;
+    this._profileLevel.setMoviesAmount(filtersList.sortHistory(this._filmModel.getFilms().slice()).length);
     this._profileLevel.updateElement();
     this._menuPresenter._stats.updateData({rank: this._profileLevel.getRank()}, true);
     renderElement(this._header, this._profileLevel.getElement(), RenderPosition.BEFOREEND);
     if (this._menu._addHistoryListButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FILTERS_LIST.sortHistory, this._filteredFilmCards);
+      this._renderFilteredFilmCards(filtersList.sortHistory, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }
 
   _updateFavourites(movieInfo) {
-    this._menu._addFavouriteListButton.innerHTML = FILTERS_LIST.sortFavourites(this._filmModel.getFilms().slice()).length;
+    this._menu._addFavouriteListButton.innerHTML = filtersList.sortFavourites(this._filmModel.getFilms().slice()).length;
     if (this._menu._addFavouriteListButton.parentNode.classList.contains(this._menu._activeClass)) {
-      this._renderFilteredFilmCards(FILTERS_LIST.sortFavourites, this._filteredFilmCards);
+      this._renderFilteredFilmCards(filtersList.sortFavourites, this._filteredFilmCards);
     }
     this._api.updateMovie(movieInfo);
   }
