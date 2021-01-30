@@ -19,7 +19,7 @@ import MenuPresenter from './menu-presenter';
 
 import ListExtra from '../view/list-extra';
 import ProfileLevel from '../view/profile-level';
-import FilmCard from '../view/card';
+import FilmCard from '../view/film-card';
 import List from '../view/list';
 import Popup from '../view/popup';
 import ShowMoreButton from '../view/show-more-button';

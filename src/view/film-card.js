@@ -1,7 +1,7 @@
 import {MAX_DESCRIPTION_LENGTH} from '../const';
 import Abstract from './abstract';
 import {createElement, parseRuntimeToString} from '../util';
-import dayjs from '../../node_modules/dayjs';
+import dayjs from 'dayjs';
 
 const createFilmCardTemplate = (film) => {
 

@@ -1,6 +1,6 @@
 import CommentsModel from '../model/comments';
 import Smart from './smart';
-import Comment from './popup-comment';
+import Comment from './comment';
 import {createFilmPopupGenres} from './popup-genres';
 import dayjs from '../../node_modules/dayjs';
 import {API} from '../const';
